@@ -51,7 +51,7 @@ class Demographics(models.Model):
     average_age = models.FloatField()
     percent_over_60 = models.FloatField()
 
-class Outbreak(models.Model):
+class OutbreakCumulative(models.Model):
     date = models.DateField()
     cases = models.IntegerField(blank=False)
     negative_tests = models.IntegerField()
@@ -60,8 +60,16 @@ class Outbreak(models.Model):
     hospitalized = models.IntegerField()
     in_icu = models.IntegerField()
 
-class OutbreakCumulative(Outbreak):
-    first_day = models.DateField()
+    @property
+    def start_date(self):
+        try:
+            # Return the date of the outbreak object with the earliest date
+            return super().objects.order_by('date')[0].date
+        except:
+            print("Error. No outbreak objects have been created yet.")
+
+class Outbreak(OutbreakCumulative):
+    admitted_to_hospital = models.IntegerField()
 
 class StayInPlace(models.Model):
     order = models.BooleanField()

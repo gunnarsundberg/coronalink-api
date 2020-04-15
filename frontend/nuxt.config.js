@@ -28,7 +28,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '~/plugins/chartkick'
+    {src: '~/plugins/chartkick', mode: 'client'}
   ],
   /*
   ** Nuxt.js dev-modules

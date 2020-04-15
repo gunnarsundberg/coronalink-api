@@ -17,6 +17,8 @@
     "bootstrap-vue": "^2.0.0",
     "chart.js": "^2.9.3",
     "nuxt": "^2.0.0",
+    "nuxt-start": "^2.12.2",
+    "package.json": "^2.0.1",
     "vue-chartkick": "^0.6.0"
   },
   "devDependencies": {}

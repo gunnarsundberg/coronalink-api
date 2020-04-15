@@ -1,7 +1,10 @@
 # VS Code
 .vscode/**
+.vscode
 
-## Frontend
+#
+# Frontend
+#
 
 # Logs
 **/logs
@@ -92,7 +95,9 @@
 # Vim swap files
 *.swp
 
-## Backend
+#
+# Backend
+#
 
 # Pipenv
 **/Pipfile.lock
