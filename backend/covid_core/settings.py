@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'covid.urls'
+ROOT_URLCONF = 'covid_core.urls'
 
 TEMPLATES = [
     {
@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'covid.wsgi.application'
+WSGI_APPLICATION = 'covid_core.wsgi.application'
 
 
 # Database
