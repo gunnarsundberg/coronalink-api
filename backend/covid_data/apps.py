@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class DataCollectionConfig(AppConfig):
-    name = 'data_collection'
+    name = 'covid_data'

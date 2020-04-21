@@ -11,6 +11,8 @@ djangorestframework = "*"
 pandas = "*"
 requests = "*"
 pytz = "*"
+timezonefinder = "*"
+celery = "*"
 
 [requires]
 python_version = "3.7"

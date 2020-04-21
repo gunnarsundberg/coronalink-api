@@ -1,6 +1,8 @@
 from django.db import models
 
+#
 # Section: Base Models
+#
 
 class Country(models.Model):
     country_name = models.CharField(max_length=20, blank=False)
@@ -11,12 +13,19 @@ class State(models.Model):
     fips_code = models.CharField(max_length=2)
     #country = models.ForeignKey(Country)
 
+    def __str__(self):
+        return self.code
+
 class County(models.Model):
     state = models.ForeignKey(State, on_delete=models.CASCADE)
     county_name = models.CharField(max_length=25)
     latitude = models.FloatField()
     longitude = models.FloatField()
+    timezone_str = models.CharField(max_length=25)
     fips_code = models.CharField(max_length=3)
+
+    def __str__(self):
+        return self.county_name
 
 class Healthcare(models.Model):
     number_of_hospital_beds = models.IntegerField()
@@ -39,9 +48,15 @@ class Airport(models.Model):
     icao_code = models.CharField(max_length = 4)
     timezone = models.CharField(max_length = 30)
 
+    def __str__(self):
+        return self.airport_name
+
 class WeatherStation(models.Model):
     station_name = models.CharField(max_length= 25)
     station_id = models.CharField(max_length=5)
+
+    def __str__(self):
+        return self.station_name
 
 class Demographics(models.Model):
     population = models.IntegerField()
@@ -53,23 +68,15 @@ class Demographics(models.Model):
 
 class OutbreakCumulative(models.Model):
     date = models.DateField()
-    cases = models.IntegerField(blank=False)
-    negative_tests = models.IntegerField()
-    total_tested = models.IntegerField()
-    deaths = models.IntegerField()
-    hospitalized = models.IntegerField()
-    in_icu = models.IntegerField()
-
-    @property
-    def start_date(self):
-        try:
-            # Return the date of the outbreak object with the earliest date
-            return super().objects.order_by('date')[0].date
-        except:
-            print("Error. No outbreak objects have been created yet.")
+    cases = models.IntegerField()
+    negative_tests = models.IntegerField(null=True)
+    total_tested = models.IntegerField(null=True)
+    deaths = models.IntegerField(null=True)
+    hospitalized = models.IntegerField(null=True)
+    in_icu = models.IntegerField(null=True)
 
 class Outbreak(OutbreakCumulative):
-    admitted_to_hospital = models.IntegerField()
+    admitted_to_hospital = models.IntegerField(null=True)
 
 class StayInPlace(models.Model):
     order = models.BooleanField()
@@ -88,9 +95,11 @@ class DailyWeather(models.Model):
     temperature = models.IntegerField()
     humidity = models.FloatField()
     uv_index = models.FloatField()
-    sunlight_direction = models.FloatField()
+    sunlight_duration = models.FloatField()
 
+#
 # Section: State models
+#
 
 class StateHealthcare(Healthcare):
     state = models.ForeignKey(State, on_delete=models.CASCADE)
@@ -102,10 +111,25 @@ class StateDemographics(Demographics):
     state = models.ForeignKey(State, on_delete=models.CASCADE)
 
 class StateOutbreak(Outbreak):
-    state = models.ForeignKey(State, on_delete=models.CASCADE)
+    state = models.ForeignKey(State, on_delete=models.CASCADE, unique_for_date="date")
+
+    @property
+    def date_of_outbreak(self):
+        # Return the date of the outbreak object with the earliest date
+        return super().objects.filter(state=state).earliest('date').date
+
+    @property
+    def days_since_outbreak(self):
+        # Return the number of days since outbreak
+        return self.date - self.date_of_outbreak
 
 class StateOutbreakCumulative(OutbreakCumulative):
-    state = models.ForeignKey(State, on_delete=models.CASCADE)
+    state = models.ForeignKey(State, on_delete=models.CASCADE, unique_for_date="date")
+
+    @property
+    def date_of_outbreak(self):
+        # Return the date of the outbreak object with the earliest date
+        return super().objects.filter(state=state).earliest('date').date
 
 class StateStayInPlace(StayInPlace):
     state = models.ForeignKey(State, on_delete=models.CASCADE)
@@ -114,12 +138,14 @@ class StateSchoolClosure(SchoolClosure):
     state = models.ForeignKey(State, on_delete=models.CASCADE)
 
 class StateDailyFlights(DailyFlights):
-    state = models.ForeignKey(State, on_delete=models.CASCADE)
+    state = models.ForeignKey(State, on_delete=models.CASCADE, unique_for_date="date")
 
 class StateDailyWeather(DailyWeather):
-    state = models.ForeignKey(State, on_delete=models.CASCADE)
+    state = models.ForeignKey(State, on_delete=models.CASCADE, unique_for_date="date")
 
+#
 # Section: County Models
+#
 
 class CountyHealthcare(Healthcare):
     county = models.ForeignKey(County, on_delete=models.CASCADE)
@@ -128,10 +154,10 @@ class CountyDemographics(Demographics):
     county = models.ForeignKey(County, on_delete=models.CASCADE)
 
 class CountyOutbreak(Outbreak):
-    county = models.ForeignKey(County, on_delete=models.CASCADE)
+    county = models.ForeignKey(County, on_delete=models.CASCADE, unique_for_date="date")
 
 class CountyOutbreakCumulative(OutbreakCumulative):
-    county = models.ForeignKey(County, on_delete=models.CASCADE)
+    county = models.ForeignKey(County, on_delete=models.CASCADE, unique_for_date="date")
 
 class CountyStayInPlace(StayInPlace):
     county = models.ForeignKey(County, on_delete=models.CASCADE)
@@ -140,4 +166,8 @@ class CountySchoolClosure(SchoolClosure):
     county = models.ForeignKey(County, on_delete=models.CASCADE)
 
 class CountyDailyWeather(DailyWeather):
+    county = models.ForeignKey(County, on_delete=models.CASCADE, unique_for_date="date")
+
+# Meteostat API requires getting weather by station. UV Index is separate and is called by coordinates
+class CountyWeatherStation(WeatherStation):
     county = models.ForeignKey(County, on_delete=models.CASCADE)
