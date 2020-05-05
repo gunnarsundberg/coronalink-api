@@ -26,7 +26,7 @@ def get_datetime_from_str(datetime_str):
     year = int(datetime_str[:4])
     month = int(datetime_str[4:6])
     day = int(datetime_str[6:8])
-    return datetime(year=year, month=month, day=day)
+    return date(year=year, month=month, day=day)
 
 # Takes in api url as str and returns json response
 def api_request_from_str(url_str):
