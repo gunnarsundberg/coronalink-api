@@ -11,5 +11,5 @@ urlpatterns = [
     url(r'v1/outbreak/cumulative/historic/states', StateOutbreakCumulativeHistoricView.as_view()),
     url(r'v1/stayinplace/states', StateStayInPlaceView.as_view()),
     url(r'v1/schoolclosure/states', StateSchoolClosureView.as_view()),
-    url(r'v1/flights/states', StateDailyFlightsView.as_view())
+    url(r'v1/flights/daily/states', StateDailyFlightsView.as_view())
 ]
