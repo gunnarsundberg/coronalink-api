@@ -125,7 +125,15 @@ STATIC_URL = '/static/'
 # REST Framework
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+     'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/hour',
+        'user': '500/minute'
+    }
 }
 
 # Celery application definition
@@ -136,6 +144,13 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
+
+# Email settings
+EMAIL_HOST = os.environ['SMTP_HOST']
+EMAIL_PORT = os.environ['SMTP_PORT']
+EMAIL_HOST_USER = os.environ['SMTP_EMAIL']
+EMAIL_HOST_PASSWORD = os.environ['SMTP_PASSWORD']
+EMAIL_USE_TLS = True
 
 """
 Celery beat example:
