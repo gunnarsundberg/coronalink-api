@@ -6,6 +6,7 @@ from covid_data.views import StateOutbreakView, StateOutbreakCumulativeView, Sta
 
 
 urlpatterns = [
+    # TODO: States URL, Demographics URL, Medical URL
     url(r'v1/outbreak/daily/states', StateOutbreakView.as_view()),
     url(r'v1/outbreak/cumulative/states', StateOutbreakCumulativeView.as_view()),
     url(r'v1/outbreak/cumulative/historic/states', StateOutbreakCumulativeHistoricView.as_view()),

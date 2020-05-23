@@ -1,6 +1,6 @@
 import pandas as pd
 from datetime import date
-from covid_data.models import State, StateSchoolClosure
+from covid_data.models import State, SchoolClosure
 
 # Takes in pandas dataframe and adds state school closures
 def import_state_school_closures(school_closure):
@@ -8,7 +8,7 @@ def import_state_school_closures(school_closure):
         school_state_str = str(row['State'])
         school_closure_bool = (row['Instated'] == 1)
         school_date_of_order = row['Date of Order']
-        school_state_object = State.objects.get(state_name=school_state_str)
+        school_state = State.objects.get(name=school_state_str)
 
-        new_state_school_closure = StateSchoolClosure(order=school_closure_bool, date=school_date_of_order, state=school_state_object)
-        new_state_school_closure.save()
+        state_school_closure = SchoolClosure(order=school_closure_bool, date=school_date_of_order, region=school_state)
+        state_school_closure.save()

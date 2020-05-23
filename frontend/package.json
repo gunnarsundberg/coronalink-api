@@ -19,7 +19,10 @@
     "nuxt": "^2.0.0",
     "nuxt-start": "^2.12.2",
     "package.json": "^2.0.1",
-    "vue-chartkick": "^0.6.0"
+    "vue-chartkick": "^0.6.0",
+    "vuesax": "^3.11.13"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@nuxtjs/dotenv": "^1.4.1"
+  }
 }

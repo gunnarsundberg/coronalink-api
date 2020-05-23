@@ -18,7 +18,7 @@ export default {
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#fff' },
+  loading: false,
   /*
   ** Global CSS
   */
@@ -34,6 +34,8 @@ export default {
   ** Nuxt.js dev-modules
   */
   buildModules: [
+  // Simple usage
+  '@nuxtjs/dotenv',
   ],
   /*
   ** Nuxt.js modules
@@ -50,6 +52,11 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
+    proxy: true // Can be also an object with default options
+  },
+
+  proxy: {
+    '/api/': 'http://127.0.0.1:8000/api/'
   },
   /*
   ** Build configuration

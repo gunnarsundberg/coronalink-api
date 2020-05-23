@@ -3,6 +3,7 @@ import requests
 import time as t
 import pytz
 from pytz import utc, timezone
+from timezonefinder import TimezoneFinder
 
 # Helper function that takes in timezone and date and returns a unix timestamp for beginning of the day and end of the day
 # Called by get_flights_by_state()
@@ -21,6 +22,10 @@ def get_local_timestamp(timezone_str, date):
 
     return int(utc_begin_datetime.timestamp()), int(utc_end_datetime.timestamp())
 
+def get_local_timezone(lat, lon):
+    tf = TimezoneFinder()
+    return tf.timezone_at(lng=lon, lat=lat)
+
 # Takes in date string with no dashes and returns datetime object
 def get_datetime_from_str(datetime_str):
     year = int(datetime_str[:4])
@@ -36,4 +41,4 @@ def api_request_from_str(url_str):
             return response.json()
         except:
             print("Unable to get data. Retrying..")
-            t.sleep(5)
+            t.sleep(2)

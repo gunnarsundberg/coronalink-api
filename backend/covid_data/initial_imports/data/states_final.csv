@@ -1,0 +1,52 @@
+State,Code,fips,land_area
+Alabama,AL,01,131171
+Alaska,AK,02,1477953
+Arizona,AZ,04,294207
+Arkansas,AR,05,134771
+California,CA,06,403466
+Colorado,CO,08,268431
+Connecticut,CT,09,12542
+Delaware,DE,10,5047
+District of Columbia,DC,11,158
+Florida,FL,12,138887
+Georgia,GA,13,148959
+Hawaii,HI,15,16635
+Idaho,ID,16,214045
+Illinois,IL,17,143793
+Indiana,IN,18,92789
+Iowa,IA,19,144669
+Kansas,KS,20,211754
+Kentucky,KY,21,102269
+Louisiana,LA,22,111898
+Maine,ME,23,79883
+Maryland,MD,24,25142
+Massachusetts,MA,25,20202
+Michigan,MI,26,146435
+Minnesota,MN,27,206232
+Mississippi,MS,28,121531
+Missouri,MO,29,178040
+Montana,MT,30,376962
+Nebraska,NE,31,198974
+Nevada,NV,32,284332
+New Hampshire,NH,33,23187
+New Jersey,NJ,34,19047
+New Mexico,NM,35,314161
+New York,NY,36,122057
+North Carolina,NC,37,125920
+North Dakota,ND,38,178711
+Ohio,OH,39,105829
+Oklahoma,OK,40,177660
+Oregon,OR,41,248608
+Pennsylvania,PA,42,115883
+Rhode Island,RI,44,2678
+South Carolina,SC,45,77857	
+South Dakota,SD,46,196350
+Tennessee,TN,47,106798
+Texas,TX,48,676587
+Utah,UT,49,212818
+Vermont,VT,50,23871
+Virginia,VA,51,102279
+Washington,WA,53,172119
+West Virginia,WV,54,62259
+Wisconsin,WI,55,140268
+Wyoming,WY,56,251470
