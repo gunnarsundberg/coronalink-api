@@ -38,7 +38,7 @@ class County(Region):
     fips_code = models.CharField(max_length=5)
     latitude = models.FloatField()
     longitude = models.FloatField()
-    timezone_str = models.CharField(max_length=25)
+    timezone_str = models.CharField(max_length=35)
     land_area = models.FloatField()
 
     def __str__(self):
