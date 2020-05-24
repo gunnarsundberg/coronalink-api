@@ -219,8 +219,8 @@ data() {
 
     /* Import outbreak data for a state (given in params). This is called each time a state is selected. */
     async updateStateData (state) {
-      const stateDailyRequest = await axios.get('http://127.0.0.1:8000/api/v1/outbreak/daily/states?state=' + state)
-      const stateCumulativeRequest = await axios.get('http://127.0.0.1:8000/api/v1/outbreak/daily/states?state=' + state)
+      const stateDailyRequest = await axios.get('http://161.35.60.204/api/v1/outbreak/daily/states?state=' + state)
+      const stateCumulativeRequest = await axios.get('http://161.35.60.204/api/v1/outbreak/daily/states?state=' + state)
       this.stateDailyData = stateDailyRequest.data
       this.stateCumulativeData = stateCumulativeRequest.data
     },
