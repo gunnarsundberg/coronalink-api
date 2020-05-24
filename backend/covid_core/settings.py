@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '&-yax0-qsef!)01+ajox+$0=3y45%p619d$mg_9&6fdy6aqq7a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ['DEBUG']
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '161.35.60.204', '127.0.0.1:3000']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '161.35.60.204']
 
 
 # Application definition
@@ -151,7 +151,8 @@ REST_FRAMEWORK = {
 
 # Cross-origin requests for frontend
 CORS_ORIGIN_WHITELIST = [
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "http://127.0.0.1:3000"
 ]
 
 # Celery application definition
