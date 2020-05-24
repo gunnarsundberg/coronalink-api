@@ -238,7 +238,7 @@ data() {
 
     progressionChartData(stateDailyData) {
         var newLiveChartData = []
-        for (var i=0; i < stateDailyData.length; i++) {
+        for (var i=stateDailyData.length; i >= 0 ; i--) {
             var newElement = [];
             console.log(i)
             newElement[0] = stateDailyData[i]['date'] 
