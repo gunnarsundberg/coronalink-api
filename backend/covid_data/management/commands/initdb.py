@@ -75,6 +75,9 @@ class Command(BaseCommand):
         print("Verifying outbreak dates...")
         for outbreak in Outbreak.objects.all():
             outbreak.save()
+        print("Verifying cumulative outbreak dates...")
+        for outbreak in OutbreakCumulative.objects.all():
+            outbreak.save()
 
         # Imports all daily data for outbreak days
         import_outbreak_dependent_data(State.objects.all())
