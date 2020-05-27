@@ -87,14 +87,14 @@ def get_county_demographics(county):
     population = population_task.result()
     median_age = median_age_task.result()
     
-    population_density = int((population[1][0]))/county.land_area
+    population_density = round(int((population[1][0]))/county.land_area, 1)
     population = int((population[1][0]))
     median_age = float((median_age[1][0]))
-    percent_male = round((int((male_population[1][0])))/population, 2)
-    percent_female = int((female_population[1][0]))
-    percent_60s = (int((male_60_61[1][0])) + int((male_62_64[1][0])) + int((male_67_69[1][0])) + int((female_60_61[1][0])) + int((female_62_64[1][0])) + int((female_65_66[1][0])) + int((female_67_69[1][0])))/population
-    percent_70s = (int((male_70_74[1][0])) + int((male_75_79[1][0])) + int((female_70_74[1][0])) + int((female_75_79[1][0])))/population
-    percent_80_plus = (int((male_80_85[1][0])) + int((male_85_plus[1][0])) + int((female_80_85[1][0])) + int((female_85_plus[1][0])))/population
+    percent_male = round((int((male_population[1][0])))/population, 3) * 100
+    percent_female = round((int((female_population[1][0])))/population, 3) * 100
+    percent_60s = round((int((male_60_61[1][0])) + int((male_62_64[1][0])) + int((male_67_69[1][0])) + int((female_60_61[1][0])) + int((female_62_64[1][0])) + int((female_65_66[1][0])) + int((female_67_69[1][0])))/population, 3) * 100
+    percent_70s = round((int((male_70_74[1][0])) + int((male_75_79[1][0])) + int((female_70_74[1][0])) + int((female_75_79[1][0])))/population, 3) * 100
+    percent_80_plus = round((int((male_80_85[1][0])) + int((male_85_plus[1][0])) + int((female_80_85[1][0])) + int((female_85_plus[1][0])))/population, 3) * 100
 
     county_demographics = Demographics.objects.create(region=county, population=population, median_age=median_age, percent_male=percent_male, percent_female=percent_female, percent_60s=percent_60s, percent_70s=percent_70s, percent_80_plus=percent_80_plus, population_density=population_density)
     county_demographics.save()
@@ -127,12 +127,12 @@ def get_state_demographics(state):
     # Get data as it will be stored
     population = int(api_request_from_str(state_base_url.format(demographic_codes['population'], str(state.fips_code)))[1][0])
     median_age = float(api_request_from_str(state_base_url.format(demographic_codes['median_age'], str(state.fips_code)))[1][0])
-    population_density = round(population/state.land_area, 2)
-    percent_male = round(male_population/population, 2)
-    percent_female = female_population
-    percent_60s = round((male_60_61 + male_62_64 + male_67_69 + female_60_61 + female_62_64 + female_65_66 + female_67_69)/population, 2)
-    percent_70s = round((male_70_74 + male_75_79 + female_70_74 + female_75_79)/population, 2)
-    percent_80_plus = round((male_80_85 + male_85_plus + female_80_85 + female_85_plus)/population, 2)
+    population_density = round(population/state.land_area, 1)
+    percent_male = round(male_population/population, 3) * 100
+    percent_female = round(female_population/population, 3) * 100
+    percent_60s = round((male_60_61 + male_62_64 + male_67_69 + female_60_61 + female_62_64 + female_65_66 + female_67_69)/population, 3) * 100
+    percent_70s = round((male_70_74 + male_75_79 + female_70_74 + female_75_79)/population, 3) * 100
+    percent_80_plus = round((male_80_85 + male_85_plus + female_80_85 + female_85_plus)/population, 3) * 100
 
     state_demographics = Demographics.objects.create(region=state, population=population, median_age=median_age, percent_male=percent_male, percent_female=percent_female, percent_60s=percent_60s, percent_70s=percent_70s, percent_80_plus=percent_80_plus, population_density=population_density)
     state_demographics.save()
