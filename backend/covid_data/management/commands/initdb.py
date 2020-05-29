@@ -1,6 +1,7 @@
 from django.conf import settings
 import pandas as pd
-from datetime import date, timedelta
+from datetime import date as d 
+from datetime import timedelta
 from covid_data.tasks import create_periodic_tasks
 # Import scripts for non-outbreak-dependent data. This will be recorded regardless of outbreak date
 from covid_data.initial_imports.regions import import_states, import_counties
@@ -38,7 +39,7 @@ class Command(BaseCommand):
         counties['Land Areakm'].replace(',','', regex=True, inplace=True)
         counties['Land Areakm'] = counties['Land Areakm'].apply(pd.to_numeric,errors='coerce')
 
-        today = date.today()
+        today = d.today()
 
         display_date = DisplayDate.objects.create(date=today-timedelta(days=1))
         display_date.save()
