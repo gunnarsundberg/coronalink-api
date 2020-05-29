@@ -4,16 +4,27 @@ import reverse_geocoder
 labels = ['id', 'name', 'city', 'country', 'iata', 'icao', 'latitude', 'longitude', 'altitude', 'timezone_utc', 'dst', 'timezone_pytz', 'type', 'source']
 airports = pd.read_csv("airports.csv", names=labels)
 
-states = pd.read_csv("states.csv")
+airports_primary = pd.read_csv("faa_primary_airports.csv")
 
-# Get names of indexes for which column country has value United States
+states = pd.read_csv("states_final.csv")
+
+# Get names of indexes for which column country does not have value United States
 indexNames = airports[ airports['country'] != 'United States' ].index
 
 
 # Delete these row indexes from dataFrame
 airports.drop(indexNames , inplace=True)
 
-airports = airports[airports.iata.notnull()]
+# Remove airports with null ICAO
+airports = airports[airports.icao.notnull()]
+
+airports = airports.assign(in_primary=airports.icao.isin(airports_primary.ICAO).astype(int))
+
+indexNames = airports[ airports['in_primary'] == 0 ].index
+# Delete these row indexes from dataFrame
+airports.drop(indexNames , inplace=True)
+
+airports = airports.drop(columns=['in_primary'])
 
 airports['state'] = ""
 
