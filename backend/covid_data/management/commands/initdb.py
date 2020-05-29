@@ -38,7 +38,9 @@ class Command(BaseCommand):
         counties['Land Areakm'].replace(',','', regex=True, inplace=True)
         counties['Land Areakm'] = counties['Land Areakm'].apply(pd.to_numeric,errors='coerce')
 
-        display_date = DisplayDate.objects.create(date=date.today()-timedelta(days=1))
+        today = date.today()
+
+        display_date = DisplayDate.objects.create(date=today-timedelta(days=1))
         display_date.save()
 
         # Import regions
