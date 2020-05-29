@@ -173,7 +173,7 @@ class DailyFlights(models.Model):
 class DailyWeather(models.Model):
     date = models.DateField()
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
-    avg_temperature = models.IntegerField()
+    avg_temperature = models.FloatField()
     max_temperature = models.FloatField()
     min_temperature = models.FloatField()
     avg_humidity = models.FloatField()
