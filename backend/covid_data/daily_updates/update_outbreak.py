@@ -10,6 +10,7 @@ from covid_data.utilities import get_datetime_from_str, api_request_from_str
 
 # Some functions only work for specific region types (state, county etc) because the data sources used differ
 
+"""
 # Gets all state outbreak data and returns it as json object
 def get_outbreak_data_by_state(outbreak_state):
     outbreak_str = "https://covidtracking.com/api/states/daily?state=" + outbreak_state.code
@@ -20,8 +21,13 @@ def get_outbreak_data_by_state(outbreak_state):
 def get_outbreak_data_by_state_and_date(outbreak_state, outbreak_date):
     outbreak_str = "https://covidtracking.com/api/states/daily?state=" + outbreak_state.code + "&date=" + str(outbreak_date).replace("-","")
     return api_request_from_str(outbreak_str)
+"""
 
-def update_state_outbreak(outbreak_data):
+def update_state_outbreak():
+    state_outbreak_csv_url = "https://raw.githubusercontent.com/COVID19Tracking/covid-tracking-data/master/data/states_daily_4pm_et.csv"
+    state_outbreak_csv = requests.get(state_outbreak_csv_url).content
+    outbreak_data = pd.read_csv(io.StringIO(state_outbreak_csv.decode('utf-8')))
+
     for index, row in outbreak_data.iterrows():
         # If state is not a region we track, move to next iteration
         try:
@@ -31,10 +37,9 @@ def update_state_outbreak(outbreak_data):
         
         record_date = get_datetime_from_str(str(row['date']))
         
-        # If no outbreak record exists in given state and date, create new outbreak record
-        if not Outbreak.objects.filter(region=record_state, date=record_date).exists() and row['positive'] > 99: 
+        # If cases are greater than 99, update or create outbreak record
+        if row['positive'] > 99: 
             daily_cases = row['positiveIncrease']
-            
             daily_total_tested = row['totalTestResultsIncrease']
             daily_deaths = row['deathIncrease']
 
@@ -58,7 +63,9 @@ def update_state_outbreak(outbreak_data):
             else:
                 daily_in_icu = None
 
-            state_outbreak = Outbreak.objects.create(region=record_state, date=record_date, cases=daily_cases, negative_tests=daily_negative_tests, total_tested=daily_total_tested, deaths=daily_deaths, admitted_to_hospital=daily_admitted_to_hospital, hospitalized=daily_hospitalized, in_icu=daily_in_icu)
+            new_values = {'region': record_state, 'date': record_date, 'cases': daily_cases, 'negative_tests': daily_negative_tests, 'total_tested': daily_total_tested, 'deaths': daily_deaths, 'admitted_to_hospital': daily_admitted_to_hospital, 'hospitalized': daily_hospitalized, 'in_icu': daily_in_icu}
+
+            state_outbreak, created = Outbreak.objects.update_or_create(region=record_state, date=record_date, defaults=new_values)
             state_outbreak.save()
 
             cumulative_cases = row['positive']
@@ -83,9 +90,11 @@ def update_state_outbreak(outbreak_data):
                 cumulative_in_icu = row['inIcuCumulative']
             else:
                 cumulative_in_icu = None
+
+            new_values = {'region': record_state, 'date': record_date, 'cases': cumulative_cases, 'negative_tests': cumulative_negative_tests, 'total_tested': cumulative_total_tested, 'deaths': cumulative_deaths, 'hospitalized': cumulative_hospitalized, 'in_icu': cumulative_in_icu}
             
-            state_outbreak_cumulative = OutbreakCumulative.objects.create(region=record_state, date=record_date, cases=cumulative_cases, negative_tests=cumulative_negative_tests, total_tested=cumulative_total_tested, deaths=cumulative_deaths, hospitalized=cumulative_hospitalized, in_icu=cumulative_in_icu)
-            state_outbreak_cumulative.save()  
+            state_outbreak_cumulative, created = OutbreakCumulative.objects.update_or_create(region=record_state, date=record_date, defaults=new_values)
+            state_outbreak_cumulative.save()
 
 def update_all_state_outbreaks(date_to_update):
     states = State.objects.all()
