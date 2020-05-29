@@ -3,7 +3,7 @@ import threading
 from covid_data.utilities import api_request_from_str, get_local_timestamp, get_local_timezone
 from covid_data.models import State, County, DailyWeather
 
-# Get all weather data for county provided by OpenWeatherMap and return json
+# Get all weather data for county provided by OpenWeatherMap and returns json
 def get_county_weather_json(county, date_to_update):
     local_timezone = get_local_timezone(county.latitude, county.longitude)
     start_timestamp, end_timestamp = get_local_timestamp(local_timezone, date_to_update)
@@ -12,7 +12,7 @@ def get_county_weather_json(county, date_to_update):
     
     return api_request_from_str(url)
 
-# Get uv index for county provided by OpenWeatherMap and return value
+# Get uv index for county provided by OpenWeatherMap and returns value
 def get_county_uv_index(county, date_to_update):
     local_timezone = get_local_timezone(county.latitude, county.longitude)
     start_timestamp, end_timestamp = get_local_timestamp(local_timezone, date_to_update)
@@ -53,13 +53,36 @@ def update_county_weather(county, date_to_update):
             min_temp = county_weather_json['list'][i]['main']['temp_min']
 
     # Calculate average values from sums
-    temp_avg = round(temp_sum /county_weather_json['cnt'], 2)
-    humidity_avg = round(humidity_sum / county_weather_json['cnt'], 2)
+    temp_avg = round(temp_sum /county_weather_json['cnt'], 1)
+    humidity_avg = round(humidity_sum / county_weather_json['cnt'], 1)
       
     #Create county weather model
     daily_weather = DailyWeather.objects.create(region=county, date=date_to_update, avg_temperature=temp_avg, max_temperature=max_temp, min_temperature=min_temp, avg_humidity=humidity_avg, uv_index=uv_index)
     daily_weather.save()  
 
 def update_state_weather(state, date_to_update):
-    pass
-    #TODO: Write entire state weather function
+    # Initialize variables
+    temp_sum = 0
+    humidity_sum = 0
+    max_temp_sum = 0
+    min_temp_sum = 0
+    uv_index_sum = 0
+    
+    state_county_weather = DailyWeather.objects.filter(date=date_to_update).filter(region__county__parent_region=state)
+    number_of_counties = state_county_weather.count()
+    
+    for county_weather in state_county_weather:
+        temp_sum += county_weather.avg_temperature
+        humidity_sum += county_weather.avg_humidity
+        max_temp_sum += county_weather.max_temperature
+        min_temp_sum += county_weather.min_temperature
+        uv_index_sum += county_weather.uv_index
+
+    temp_avg = round(temp_sum/number_of_counties, 1)
+    humidity_avg = round(humidity_sum/number_of_counties, 1)
+    max_temp = round(max_temp_sum/number_of_counties, 1)
+    min_temp = round(min_temp_sum/number_of_counties, 1)
+    uv_index = round(uv_index_sum/number_of_counties, 1)
+
+    daily_weather = DailyWeather.objects.create(region=state, date=date_to_update, avg_temperature=temp_avg, max_temperature=max_temp, min_temperature=min_temp, avg_humidity=humidity_avg, uv_index=uv_index)
+    daily_weather.save()  
