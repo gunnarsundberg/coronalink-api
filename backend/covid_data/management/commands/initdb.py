@@ -10,9 +10,10 @@ from covid_data.initial_imports.stay_in_place import import_state_stay_in_place
 from covid_data.initial_imports.demographics import import_county_demographics, import_state_demographics
 from covid_data.initial_imports.healthcare import import_state_healthcare
 from covid_data.daily_updates.update_outbreak import update_state_outbreak
+from covid_data.daily_updates.update_weather import update_state_weather
 
 # Models
-from covid_data.models import Outbreak, OutbreakCumulative, DisplayDate
+from covid_data.models import State, Outbreak, OutbreakCumulative, DisplayDate
 
 # Import outbreak-dependent data. This will only be recorded when cases exceed 100
 from covid_data.initial_imports.outbreak_related_data import import_outbreak_related_data
@@ -80,5 +81,10 @@ class Command(BaseCommand):
         # Import demographics
         import_county_demographics()
         import_state_demographics()
+
+        for outbreak in Outbreak.objects.filter(region__in=State.objects.all()):
+            date = outbreak.date
+            state = outbreak.region.state
+            update_state_weather(state, date)
 
         print("--- %s minutes ---" % ((time.time() - start_time)/60))

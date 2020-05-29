@@ -21,8 +21,7 @@ def import_outbreak_related_data(states):
                     for county in state_counties:
                         e.submit(update_county_weather, county, date_to_update)
 
-                update_state_weather(state, date_to_update)
-                            
             data_bar.update(1)
+                            
         data_bar.close()
         states_bar.update(1)
