@@ -35,10 +35,9 @@ def get_datetime_from_str(datetime_str):
 
 # Takes in api url as str and returns json response
 def api_request_from_str(url_str):
-    for i in range(4):
+    for i in range(6):
         try:
             response = requests.get(url_str)
             return response.json()
         except:
-            print("Unable to get data. Retrying..")
             t.sleep(2)
