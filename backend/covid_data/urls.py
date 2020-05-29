@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework import routers
 from django.conf.urls import url
 from django.urls import include
-from covid_data.views import StateOutbreakView, StateOutbreakCumulativeView, StateOutbreakCumulativeHistoricView, StateStayInPlaceView, StateSchoolClosureView, StateDailyFlightsView, StateDemographicsView, CountyDemographicsView, StateDailyWeatherView, StateView
+from covid_data.views import StateOutbreakView, StateOutbreakCumulativeView, StateOutbreakCumulativeHistoricView, StateStayInPlaceView, StateSchoolClosureView, StateDailyFlightsView, StateDemographicsView, CountyDemographicsView, StateDailyWeatherView, CountyDailyWeatherView, StateView
 
 
 urlpatterns = [
@@ -20,6 +20,7 @@ urlpatterns = [
 
     # Weather
     url(r'v1/weather/daily/states', StateDailyWeatherView.as_view()),
+    url(r'v1/weather/daily/counties', CountyDailyWeatherView.as_view()),
 
     # Demographics
     url(r'v1/demographics/states', StateDemographicsView.as_view()),
