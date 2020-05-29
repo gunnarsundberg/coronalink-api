@@ -64,6 +64,14 @@ class StateDailyWeatherSerializer(serializers.ModelSerializer):
         model = DailyWeather
         fields = ['state', 'date', 'avg_temperature', 'max_temperature', 'min_temperature', 'avg_humidity', 'uv_index']
 
+class CountyDailyWeatherSerializer(serializers.ModelSerializer):
+    state = serializers.StringRelatedField(source='region.county.parent_region')
+    county = serializers.StringRelatedField(source='region.county')
+
+    class Meta:
+        model = DailyWeather
+        fields = ['state', 'county', 'date', 'avg_temperature', 'max_temperature', 'min_temperature', 'avg_humidity', 'uv_index']
+
 # TODO: Weather serializer
 # TODO: Demographics serializer
 # TODO: Update all state and county serializers for new regions models
