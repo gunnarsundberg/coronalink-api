@@ -21,6 +21,7 @@ django-prometheus = "*"
 tqdm = "*"
 psycopg2-binary = "*"
 redis = "*"
+supervisor = "*"
 
 [requires]
 python_version = "3.7"
