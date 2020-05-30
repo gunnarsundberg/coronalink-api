@@ -133,7 +133,7 @@ class StateDailyWeatherView(ListAPIView):
     """
     API endpoint listing daily weather by state. All values are averages of county values, including max and mins.
     """
-    queryset = DailyWeather.objects.filter(region__in=State.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date)
+    queryset = DailyWeather.objects.filter(region__in=State.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date).order_by('-date','region')
     serializer_class = StateDailyWeatherSerializer
 
 class CountyDailyWeatherView(ListAPIView):
