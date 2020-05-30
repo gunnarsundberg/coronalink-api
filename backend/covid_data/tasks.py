@@ -23,7 +23,9 @@ def update_state_outbreak_data():
 
 @shared_task
 def update_display_date():
-    print("The task worked!")
+    previous_display_date = DisplayDate.objects.all().latest('date').date
+    new_display_date = DisplayDate.objects.create(date=previous_display_date + timedelta(days=1))
+    new_display_date.save()
 
 # TODO: In future, make updates dependent on date of latest outbreak record rather than assuming dates. Also, update days between if they were missed.
 @shared_task
@@ -58,21 +60,21 @@ def update_state_data():
                 update_state_weather(state, new_display_date)
 
 def create_periodic_tasks():
-    #test_schedule = CrontabSchedule.objects.create(minute="1")
+    display_date_schedule = CrontabSchedule.objects.create(minute="10", hour="11")
 
     outbreak_schedule = CrontabSchedule.objects.create(minute="0", hour="2")
 
-    outbreak_related_county_schedule = CrontabSchedule.objects.create(minute="30", hour="3, 4, 5, 6, 7, 8, 9, 10, 11")
+    outbreak_related_county_schedule = CrontabSchedule.objects.create(minute="30", hour="4, 5, 6, 7, 8, 9, 10")
 
-    outbreak_related_state_schedule = CrontabSchedule.objects.create(minute="0", hour="4, 5, 6, 7, 8, 9, 10, 11, 12")
-    """
+    outbreak_related_state_schedule = CrontabSchedule.objects.create(minute="0", hour="5, 6, 7, 8, 9, 10, 11")
+    
     PeriodicTask.objects.create(
-        crontab=test_schedule,
-        name='Test django celery beat',
-        task='covid_data.tasks.test_task',
+        crontab=display_date_schedule,
+        name='Update API display date',
+        task='covid_data.tasks.update_display_date',
         enabled=True,
     )
-    """
+
     PeriodicTask.objects.create(
         crontab=outbreak_schedule,
         name='Nightly state outbreak data update',
