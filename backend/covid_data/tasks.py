@@ -58,21 +58,21 @@ def update_state_data():
                 update_state_weather(state, new_display_date)
 
 def create_periodic_tasks():
-    test_schedule = CrontabSchedule.objects.create(minute="1")
+    #test_schedule = CrontabSchedule.objects.create(minute="1")
 
     outbreak_schedule = CrontabSchedule.objects.create(minute="0", hour="2")
 
     outbreak_related_county_schedule = CrontabSchedule.objects.create(minute="30", hour="3, 4, 5, 6, 7, 8, 9, 10, 11")
 
     outbreak_related_state_schedule = CrontabSchedule.objects.create(minute="0", hour="4, 5, 6, 7, 8, 9, 10, 11, 12")
-
+    """
     PeriodicTask.objects.create(
         crontab=test_schedule,
         name='Test django celery beat',
         task='covid_data.tasks.test_task',
         enabled=True,
     )
-
+    """
     PeriodicTask.objects.create(
         crontab=outbreak_schedule,
         name='Nightly state outbreak data update',
