@@ -69,7 +69,7 @@ def update_state_weather(state, date_to_update):
     uv_index_sum = 0
     
     state_county_weather = DailyWeather.objects.filter(date=date_to_update).filter(region__county__parent_region=state)
-    number_of_counties = state_county_weather.count()
+    number_of_counties = County.objects.filter(parent_region=state).count()
     
     for county_weather in state_county_weather:
         temp_sum += county_weather.avg_temperature
