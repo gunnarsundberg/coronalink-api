@@ -3,11 +3,13 @@
         <div>
             <b-card-group deck class="px-5">
 
-                <b-card title="New Cases" class="shadow" align="center" align-v="center">
-                    <b-card-text align-middle>
+                <b-card title="New Cases" class="shadow" align="center">
+                    <b-card-text class="">
+                        <div class="my-auto">
                         <h1>{{ newCases }}</h1>
                         <h3 class="text-danger" v-if="caseIncrease(newCases, initialCases) > 0">+{{ percentChange(initialCases, newCases) }}%</h3>
                         <h3 class="text-success" v-if="caseIncrease(newCases, initialCases) <= 0">{{ percentChange(initialCases, newCases) }}%</h3>
+                        </div>
                     </b-card-text>
                 </b-card>
 

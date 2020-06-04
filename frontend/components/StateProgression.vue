@@ -4,8 +4,8 @@
             <div class="align-center">
                 <h3 align-middle>Outbreak Progression</h3>
             </div>
-            <div class="mx-5" align-middle>
-                <div class="px-5 py-5">
+            <div class="mx-5">
+                <div class="px-5 py-5" align="center">
                     <line-chart :data="progressionChartData(stateCumulativeData)" :points="false" width="800px" height="400px" class=""></line-chart>
                 </div>
             </div>

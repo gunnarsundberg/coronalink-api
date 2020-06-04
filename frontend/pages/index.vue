@@ -1,8 +1,11 @@
 <template>
   <div class="mx-0 px-0 py-5">
     <div class="mb-5">
-      <h1 class="py-5" align="center">Poly COVID Tracking Project</h1>
-      <b-tabs align="center">
+      <div class="pb-5">
+          <h1 class="py-5 header" align="center">Poly COVID Tracking Project</h1>
+          <div class="res-circle mb-5" align="center"></div>
+      </div>
+      <b-tabs align="center" class="pt-5">
         <b-tab title="National View"><NationalView v-if="nationalOutbreak" :nationalOutbreak="nationalOutbreak"></NationalView></b-tab>
         <b-tab title="State View"><StateView v-if="nationalOutbreak" :nationalOutbreak="nationalOutbreak"></StateView></b-tab>
       </b-tabs>
@@ -28,7 +31,7 @@ export default {
   },
   /* Initial import for national outbreak data. Called before initial page load. */
   async asyncData () {
-      const {data} = await axios.get('http://127.0.0.1:8000/api/v1/outbreak/cumulative/states')
+      const {data} = await axios.get(process.env.API_HOST + process.env.PORT + '/api/v1/outbreak/cumulative/states')
       return {nationalOutbreak:data}
   },
 }
@@ -54,6 +57,27 @@ export default {
   100% {
     background: #b22cff;
   }
+}
+*/
+/*
+.res-circle {
+  width: 20%;
+  border-radius: 50%;
+  background: #bcd6ff;
+  position: absolute;
+  margin: 60%;
+  margin-top:-10%;
+  z-index: 1;
+}
+
+.res-circle:after {
+  content: "";
+  display: block;
+  padding-bottom: 100%;
+  z-index: 1;
+}
+.header {
+  z-index: 100 !important;
 }
 */
 </style>
