@@ -4,7 +4,7 @@ module.exports = {
     exec_mode : 'cluster', // enables clustering
     instances : '2', // or an integer
     //cwd       : './current', // only if using a subdirectory
-    script    : './node_modules/nuxt-start/bin/nuxt-start', // The magic ke
+    script    : './node_modules/nuxt-start/bin/nuxt-start.js', // The magic ke
   }],
 
   deploy : {
