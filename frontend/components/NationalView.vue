@@ -100,11 +100,13 @@
         </b-col>
         
         <b-col class="col-lg-8 order-1-md">
+          <!--
           <b-card title="Outbreak Map" class="shadow">
             <div class="card-body">
               <geo-chart :data="[['City', 'Cases'], ['US-FL', 70], ['US-NY', 90], ['US-CA', 42], ['US-OR', 51]]" :library="{region: 'US', resolution: 'provinces', sizeAxis: { minValue: 0, maxValue: 100 }, displayMode: 'markers'}"></geo-chart>
             </div>
           </b-card>
+          -->
         </b-col>
       </b-row>
       <div class="py-5">
