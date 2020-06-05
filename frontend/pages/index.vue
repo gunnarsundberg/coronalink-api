@@ -31,7 +31,7 @@ export default {
   },
   /* Initial import for national outbreak data. Called before initial page load. */
   async asyncData () {
-      const {data} = await axios.get(process.env.API_HOST + process.env.PORT + '/api/v1/outbreak/cumulative/states')
+      const {data} = await axios.get('http://161.35.60.204/api/v1/outbreak/cumulative/states')
       return {nationalOutbreak:data}
   },
 }
