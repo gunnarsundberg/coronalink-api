@@ -6,8 +6,7 @@ module.exports = {
     //cwd       : './current', // only if using a subdirectory
     script: 'npm run clear && npm run build && npm run start',
     instances: 1,
-    autorestart,
-    watch,
+    watch: true,
     max_memory_restart: maxMemoryRestart,
     //env: dotenv.config({ path: './config/.env.pro' }).parsed
   }],
