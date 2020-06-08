@@ -39,7 +39,7 @@
 
                 <b-card title="New Cases by Day" class="shadow">
                     <div class="card-body">
-                        <column-chart :data="progressionChartData(stateDailyData)" min="0" :library="{scales: {xAxes: [{ticks: {display: false}}]}}" :label="False" height="150px"></column-chart>
+                        <column-chart :data="progressionChartData(stateDailyData)" min="0" :library="{scales: {xAxes: [{ticks: {display: false}}]}}" :label="false" height="150px"></column-chart>
                     </div>
                 </b-card>
 
@@ -124,7 +124,6 @@ export default {
             var newWeeklyData = []
             for (var i=6; i >= 0; i--) {
                 var newElement = [];
-                console.log(i)
                 newElement[0] = stateDailyData[i]['date'] 
                 newElement[1] = stateDailyData[i]['cases']
                 newWeeklyData.push(newElement);
