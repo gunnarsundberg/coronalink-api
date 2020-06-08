@@ -6,7 +6,7 @@
           <div class="res-circle mb-5" align="center"></div>
       </div>
       <b-tabs align="center" class="pt-5">
-        <b-tab title="National View"><NationalView v-if="nationalOutbreak" :nationalOutbreak="nationalOutbreak"></NationalView></b-tab>
+        <b-tab title="National View"><NationalView :nationalOutbreak="nationalOutbreak"></NationalView></b-tab>
         <b-tab title="State View"><StateView v-if="nationalOutbreak" :nationalOutbreak="nationalOutbreak"></StateView></b-tab>
       </b-tabs>
     </div>
@@ -37,47 +37,4 @@ export default {
 }
 </script>
 <style>
-/*
-.page-enter-active {
-  -webkit-animation: color-change-2x 2s linear infinite alternate both;
-	animation: color-change-2x 2s linear infinite alternate both;
-}
-@-webkit-keyframes color-change-2x {
-  0% {
-    background: #19dcea;
-  }
-  100% {
-    background: #b22cff;
-  }
-}
-@keyframes color-change-2x {
-  0% {
-    background: #19dcea;
-  }
-  100% {
-    background: #b22cff;
-  }
-}
-*/
-/*
-.res-circle {
-  width: 20%;
-  border-radius: 50%;
-  background: #bcd6ff;
-  position: absolute;
-  margin: 60%;
-  margin-top:-10%;
-  z-index: 1;
-}
-
-.res-circle:after {
-  content: "";
-  display: block;
-  padding-bottom: 100%;
-  z-index: 1;
-}
-.header {
-  z-index: 100 !important;
-}
-*/
 </style>
