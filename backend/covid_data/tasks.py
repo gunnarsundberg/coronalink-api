@@ -24,8 +24,9 @@ def update_state_outbreak_data():
 @shared_task
 def update_display_date():
     previous_display_date = DisplayDate.objects.all().latest('date').date
-    new_display_date = DisplayDate.objects.create(date=previous_display_date + timedelta(days=1))
-    new_display_date.save()
+    new_display_date = previous_display_date + timedelta(days=1)
+    new_display_date_object = DisplayDate.objects.create(date=new_display_date)
+    new_display_date_object.save()
 
 # TODO: In future, make updates dependent on date of latest outbreak record rather than assuming dates. Also, update days between if they were missed.
 @shared_task
