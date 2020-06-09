@@ -57,6 +57,15 @@ class StateDailyFlightsFilter(django_filters.FilterSet):
         model = DailyFlights
         fields = ('state', 'date', 'number_of_inbound_flights', 'number_of_outbound_flights')
 
+class StateDemographicsFilter(django_filters.FilterSet):
+    state = django_filters.ModelChoiceFilter(field_name='region__state',
+                                            to_field_name='code',
+                                            queryset=State.objects.all())
+
+    class Meta:
+        model = Demographics
+        fields = ('state',)
+
 #
 # Section: DRF views
 #
@@ -121,6 +130,7 @@ class StateDemographicsView(ListAPIView):
     """
     queryset = Demographics.objects.filter(region__in=State.objects.all())
     serializer_class = StateDemographicsSerializer
+    filter_class = StateDemographicsFilter
 
 class CountyDemographicsView(ListAPIView):
     """
