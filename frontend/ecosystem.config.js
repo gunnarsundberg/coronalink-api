@@ -4,7 +4,7 @@ module.exports = {
     exec_mode : 'cluster', // enables clustering
     instances : '2',
     //cwd       : './current', // only if using a subdirectory
-    script: 'npm run build && ./node_modules/nuxt-start/bin/nuxt-start.js',
+    script: './node_modules/nuxt-start/bin/nuxt-start.js',
     watch: true,
   }],
 };
