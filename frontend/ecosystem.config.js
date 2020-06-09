@@ -1,10 +1,10 @@
 module.exports = {
   apps : [{
     name      : 'covidfrontend', // App name that shows in `pm2 ls`
-    //exec_mode : 'cluster', // enables clustering
-    instances : '1',
+    exec_mode : 'cluster', // enables clustering
+    instances : '2',
     //cwd       : './current', // only if using a subdirectory
-    script: 'npm run build && npm run start',
+    script: 'npm run build && ./node_modules/nuxt-start/bin/nuxt-start.js',
     watch: true,
   }],
 };
