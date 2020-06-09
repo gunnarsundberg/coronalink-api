@@ -170,20 +170,3 @@ EMAIL_PORT = os.environ['SMTP_PORT']
 EMAIL_HOST_USER = os.environ['SMTP_EMAIL']
 EMAIL_HOST_PASSWORD = os.environ['SMTP_PASSWORD']
 EMAIL_USE_TLS = True
-
-"""
-Celery beat example:
-CELERY_BEAT_SCHEDULE = {
-    'task-number-one': {
-        'task': 'app1.tasks.task_number_one',
-        'schedule': crontab(minute=59, hour=23),
-        'args': (*args)
-    },
-    'task-number-two': {
-        'task': 'app2.tasks.task_number_two',
-        'schedule': crontab(minute=0, hour='*/3,10-19'),
-        'args': (*args)
-    }
-}
-Note: only include args if function has args
-"""
