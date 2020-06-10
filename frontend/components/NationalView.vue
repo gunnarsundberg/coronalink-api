@@ -1,6 +1,5 @@
 <template>
     <div>
-      <script src="https://www.gstatic.com/charts/loader.js"></script>
       <div class="mx-0 px-0 my-5">
       <h3> Daily Overview</h3>
       <div class="row justify-content-between pb-4">
