@@ -21,7 +21,7 @@
                
             </div>
 
-            <state-fast-facts v-if="dataLoaded(stateDailyData)" :currentState="currentState"></state-fast-facts>
+            <state-fast-facts v-if="dataLoaded(stateDemographics)" :currentState="currentState" :stateDemographics="stateDemographics"></state-fast-facts>
 
             <state-progression v-if="dataLoaded(stateDailyData)" :stateCumulativeData="stateCumulativeData" :currentState="currentState"></state-progression>
 
@@ -108,6 +108,7 @@ export default {
             currentState: 'AL',
             stateDailyData: null,
             stateCumulativeData: null,
+            stateDemographics: null,
         }
     },
 
@@ -130,9 +131,11 @@ export default {
         async updateStateData (state) {
             const stateDailyRequest = await axios.get('http://161.35.60.204/api/v1/outbreak/daily/states?state=' + state)
             const stateCumulativeRequest = await axios.get('http://161.35.60.204/api/v1/outbreak/cumulative/historic/states?state=' + state)
+            const stateDemographics = await axios.get('http://161.35.60.204/api/v1/demographics/states?state=' + state);
             
             this.stateDailyData = stateDailyRequest.data
             this.stateCumulativeData = stateCumulativeRequest.data
+            this.stateDemographics = stateDemographics.data;
         },
     }
 
