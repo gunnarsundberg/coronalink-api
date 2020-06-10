@@ -1,5 +1,6 @@
 <template>
     <div>
+      <script src="https://www.gstatic.com/charts/loader.js"></script>
       <div class="mx-0 px-0 my-5">
       <h3> Daily Overview</h3>
       <div class="row justify-content-between pb-4">
@@ -46,7 +47,6 @@
         <b-col class="col-lg-8 order-1-md">
           <b-card title="Outbreak Map" class="shadow">
             <div class="card-body">
-              <script src="https://www.gstatic.com/charts/loader.js"></script>
               <geo-chart :data="[['City', 'Cases'], ['US-FL', 70], ['US-NY', 90], ['US-CA', 42], ['US-OR', 51]]" :library="{region: 'US', resolution: 'provinces', sizeAxis: { minValue: 0, maxValue: 100 }, displayMode: 'markers'}"></geo-chart>
             </div>
           </b-card>
