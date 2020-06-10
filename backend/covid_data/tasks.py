@@ -28,6 +28,30 @@ def update_display_date():
     new_display_date_object = DisplayDate.objects.create(date=new_display_date)
     new_display_date_object.save()
 
+@shared_task
+def recover_county_data(start_date, end_date):
+    iter_date = start_date
+    while iter_date <= end_date:
+        with ThreadPoolExecutor() as e:
+            for county in County.objects.all():
+                e.submit(update_county_weather, county, iter_date)
+    iter_date += timedelta(days=1)
+
+@shared_task
+def recover_state_data(start_date, end_date):
+    iter_date = start_date
+    while iter_date <= end_date:
+        with ThreadPoolExecutor() as e:
+            for state in State.objects.all():
+                e.submit(update_state_weather, state, iter_date)
+    iter_date += timedelta(days=1)
+
+    iter_date = start_date
+    while iter_date <= end_date:
+        for state in State.objects.all():
+            update_regional_flights(state, iter_date)
+    iter_date += timedelta(days=1)
+
 # TODO: In future, make updates dependent on date of latest outbreak record rather than assuming dates. Also, update days between if they were missed.
 @shared_task
 def update_county_data():
