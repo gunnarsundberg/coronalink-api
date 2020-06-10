@@ -42,7 +42,7 @@ export default {
     
     computed: {
         percentOver60: function () {
-            return this.stateDemographics[0]['percent_60s'] + this.stateDemographics[0]['percent_70s'] + this.stateDemographics[0]['percent_80_plus']
+            return (this.stateDemographics[0]['percent_60s'] + this.stateDemographics[0]['percent_70s'] + this.stateDemographics[0]['percent_80_plus']).toFixed(1)
         },
         populationDensity: function () {
             return this.stateDemographics[0]['population_density']
