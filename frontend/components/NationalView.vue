@@ -54,6 +54,7 @@
       <div class="py-5">
       </div>
       </div>
+      <script src="https://www.gstatic.com/charts/loader.js"></script>
   </div>
 </template>
 

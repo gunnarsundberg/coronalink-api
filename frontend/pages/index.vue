@@ -10,7 +10,6 @@
         <b-tab title="State View"><StateView v-if="nationalOutbreak" :nationalOutbreak="nationalOutbreak"></StateView></b-tab>
       </b-tabs>
     </div>
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
   </div>
 </template>
 
