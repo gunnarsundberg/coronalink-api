@@ -16,7 +16,6 @@
       </b-collapse>
     
     </b-navbar>
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
     <nuxt />
   </div>
 </template>
