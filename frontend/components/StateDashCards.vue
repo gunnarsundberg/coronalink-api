@@ -7,8 +7,8 @@
                     <b-card-text class="">
                         <div class="my-auto">
                         <h1>{{ newCases }}</h1>
-                        <h3 class="text-danger" v-if="caseIncrease(newCases, initialCases) > 0">+{{ percentChange(initialCases, newCases) }}%</h3>
-                        <h3 class="text-success" v-if="caseIncrease(newCases, initialCases) <= 0">{{ percentChange(initialCases, newCases) }}%</h3>
+                        <h3 class="text-danger" v-if="caseIncrease(newCases, initialCases) > 0 && isFinite(percentChange(initialCases, newCases))">+{{ percentChange(initialCases, newCases) }}%</h3>
+                        <h3 class="text-success" v-if="caseIncrease(newCases, initialCases) <= 0 && isFinite(percentChange(initialCases, newCases))">{{ percentChange(initialCases, newCases) }}%</h3>
                         </div>
                     </b-card-text>
                 </b-card>
@@ -22,8 +22,8 @@
                 <b-card title="New Deaths" class="shadow" align="center">
                     <b-card-text>
                         <h1>{{ newDeaths }}</h1>
-                        <h3 class="text-danger" v-if="deathIncrease(newDeaths, initialDeaths) > 0">+{{ percentChange(initialDeaths, newDeaths) }}%</h3>
-                        <h3 class="text-success" v-if="deathIncrease(newDeaths, initialDeaths) <= 0">{{ percentChange(initialDeaths, newDeaths) }}%</h3>
+                        <h3 class="text-danger" v-if="deathIncrease(newDeaths, initialDeaths) > 0 && isFinite(percentChange(initialDeaths, newDeaths))">+{{ percentChange(initialDeaths, newDeaths) }}%</h3>
+                        <h3 class="text-success" v-if="deathIncrease(newDeaths, initialDeaths) <= 0 && isFinite(percentChange(initialDeaths, newDeaths))">{{ percentChange(initialDeaths, newDeaths) }}%</h3>
                     </b-card-text>
                 </b-card>
 
