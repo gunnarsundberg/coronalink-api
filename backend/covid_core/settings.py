@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'rest_framework',
     'django_filters',
+    'django_postgrespool2',
     'covid_data',
 ]
 
@@ -86,7 +87,7 @@ WSGI_APPLICATION = 'covid_core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django_prometheus.db.backends.postgresql',
+        'ENGINE': 'django_postgrespool2',
         'NAME': os.environ['DB_NAME'],
         'USER': os.environ['DB_USER'],
         'PASSWORD': os.environ['DB_PASSWORD'],

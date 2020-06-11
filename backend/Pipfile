@@ -23,6 +23,7 @@ psycopg2-binary = "*"
 redis = "*"
 supervisor = "*"
 gunicorn = "*"
+django-postgrespool2 = "*"
 
 [requires]
 python_version = "3.7"
