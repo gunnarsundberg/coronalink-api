@@ -1,5 +1,5 @@
 <template>
-  <div v-enter-active>
+  <div>
     <b-navbar toggleable="lg" type="light" class="my-0 py-0 px-0">
       <b-navbar-brand class="mb-0 pb-4 pt-3" style="background-color: #532d8e;">
         <img src="https://floridapoly.edu/wp-content/themes/floridapolytechnic/images/logo.svg" width="250" height="40" alt="">
@@ -20,8 +20,6 @@
   </div>
 </template>
 
-<script>
 
-</script>
 <style>
 </style>

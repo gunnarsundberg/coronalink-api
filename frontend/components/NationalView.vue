@@ -1,10 +1,10 @@
 <template>
-    <div>
-      <div class="mx-0 px-0 my-5">
-      <h3> Daily Overview</h3>
+    <div class="px-5">
+      <div class="mx-0 px-4 my-5">
+      <h3>Overview</h3>
       <div class="row justify-content-between pb-4">
         <b-col class="col-4">
-          <p class="text-muted">Data from 4/11/20</p>
+          <p class="text-muted">Data from {{ newestDate }}</p>
         </b-col>
         <b-col class="col-4">
         </b-col>
@@ -76,6 +76,10 @@ export default {
   computed: {
     sortedNationalOutbreak: function () {
       return this.nationalOutbreak.sort(compareCases).slice(0, 5)
+    },
+    
+    newestDate: function () {
+      return this.nationalOutbreak[0]['date']
     }
   },
   
