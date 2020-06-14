@@ -2,13 +2,19 @@
   <div>
     <Slide :closeOnNavigation="true">
       <a id="home">
-        <span><nuxt-link to="/">Dashboard</nuxt-link></span>
+        <nuxt-link to="/">
+          <span>Dashboard</span>
+        </nuxt-link>
       </a>
       <a id="">
-        <span><nuxt-link to="/data">Data</nuxt-link></span>
+        <nuxt-link to="/data">
+          <span>Data</span>
+        </nuxt-link>
       </a>
       <a id="">
-        <span><nuxt-link to="/api">API</nuxt-link></span>
+        <nuxt-link to="/api">
+          <span>API</span>
+        </nuxt-link>
       </a>
     </Slide>
       <div class="px-5 py-5" style="background: #654ea3; background: -webkit-linear-gradient(to right, #654ea3, #eaafc8); background: linear-gradient(to right, #654ea3, #eaafc8);">
