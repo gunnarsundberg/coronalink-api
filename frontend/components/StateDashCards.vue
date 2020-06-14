@@ -2,53 +2,19 @@
     <div>
         <div>
             <b-card-group deck class="px-5">
-
-                <b-card title="New Cases" class="shadow" align="center">
-                    <b-card-text class="">
-                        <div class="my-auto">
-                        <h1>{{ newCases }}</h1>
-                        <h3 class="text-danger" v-if="caseIncrease(newCases, initialCases) > 0 && isFinite(percentChange(initialCases, newCases))">+{{ percentChange(initialCases, newCases) }}%</h3>
-                        <h3 class="text-success" v-if="caseIncrease(newCases, initialCases) <= 0 && isFinite(percentChange(initialCases, newCases))">{{ percentChange(initialCases, newCases) }}%</h3>
-                        </div>
-                    </b-card-text>
-                </b-card>
-
+                <new-cases-card :initialCases="initialCases" :newCases="newCases"></new-cases-card>
                 <b-card title="New Cases This Week" class="shadow">
                     <div class="card-body">
                         <line-chart :data="weeklyChartData(stateDailyData)" height="150px"></line-chart>
                     </div>
                 </b-card>
-
-                <b-card title="New Deaths" class="shadow" align="center">
-                    <b-card-text>
-                        <h1>{{ newDeaths }}</h1>
-                        <h3 class="text-danger" v-if="deathIncrease(newDeaths, initialDeaths) > 0 && isFinite(percentChange(initialDeaths, newDeaths))">+{{ percentChange(initialDeaths, newDeaths) }}%</h3>
-                        <h3 class="text-success" v-if="deathIncrease(newDeaths, initialDeaths) <= 0 && isFinite(percentChange(initialDeaths, newDeaths))">{{ percentChange(initialDeaths, newDeaths) }}%</h3>
-                    </b-card-text>
-                </b-card>
-
+                <new-deaths-card :initialDeaths="initialDeaths" :newDeaths="newDeaths"></new-deaths-card>
             </b-card-group>
 
             <b-card-group deck class="pt-3 pb-5 px-5">
-
-                <b-card title="Cumulative Cases" class="shadow" align="center" align-v="center">
-                    <b-card-text align-middle>
-                        <h1>{{ cumulativeCases }}</h1>
-                    </b-card-text>
-                </b-card>
-
-                <b-card title="New Cases by Day" class="shadow">
-                    <div class="card-body">
-                        <column-chart :data="progressionChartData(stateDailyData)" min="0" :library="{scales: {xAxes: [{ticks: {display: false}}]}}" :label="false" height="150px"></column-chart>
-                    </div>
-                </b-card>
-
-                <b-card title="Cumulative Deaths" class="shadow" align="center">
-                    <b-card-text>
-                        <h1>{{ cumulativeDeaths }}</h1>
-                    </b-card-text>
-                </b-card>
-
+                <cumulative-cases-card :cumulativeCases="cumulativeCases"></cumulative-cases-card>
+                <new-cases-chart-card :stateDailyData="stateDailyData"></new-cases-chart-card>
+                <cumulative-deaths-card :cumulativeDeaths="cumulativeDeaths"></cumulative-deaths-card>
             </b-card-group>
         </div>
     </div>
@@ -56,6 +22,11 @@
 
 <script>
 import {numberWithCommas, progressionChartData} from '~/mixins/helper.js'
+import NewCasesCard from '~/components/NewCasesCard.vue'
+import NewDeathsCard from '~/components/NewDeathsCard.vue'
+import CumulativeCasesCard from '~/components/CumulativeCasesCard.vue'
+import CumulativeDeathsCard from '~/components/CumulativeDeathsCard.vue'
+import NewCasesChartCard from '~/components/NewCasesChartCard.vue'
 
 export default {
     props: {
@@ -68,7 +39,14 @@ export default {
             type: Array,
             required: true
         },
+    },
 
+    components: {
+        NewCasesCard,
+        NewDeathsCard,
+        CumulativeCasesCard,
+        CumulativeDeathsCard,
+        NewCasesChartCard
     },
 
     data () {
@@ -108,17 +86,6 @@ export default {
     
     methods: {
         /* Live Data methods. These will be moved to a separate component in the future */
-        percentChange(initialData, newData) {
-            return ((((newData - initialData)/initialData) * 100).toFixed(1))
-        },
-
-        deathIncrease(newDeaths, initialDeaths) {
-            return newDeaths - initialDeaths
-        },
-
-        caseIncrease(newCases, initialCases) {
-            return newCases - initialCases
-        },
 
         weeklyChartData(stateDailyData) {
             var newWeeklyData = []
