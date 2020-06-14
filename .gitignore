@@ -99,9 +99,6 @@
 # Backend
 #
 
-# Pipenv
-**/Pipfile.lock
-
 # pycache
 **/__pycache__/
 
@@ -110,7 +107,7 @@
 !__init__.py
 
 # static files
-**/static/
+/**/static/
 
 # db
 **/db.sqlite3
