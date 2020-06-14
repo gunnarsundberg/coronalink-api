@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div>
     <Slide :closeOnNavigation="true" class="bg-dark">
       <a id="home">
         <span><nuxt-link to="/">Dashboard</nuxt-link></span>
@@ -11,7 +11,6 @@
         <span><nuxt-link to="/api">API</nuxt-link></span>
       </a>
     </Slide>
-    <main id="page-wrap">
       <div class="px-5 py-5" style="background: #654ea3; background: -webkit-linear-gradient(to right, #654ea3, #eaafc8); background: linear-gradient(to right, #654ea3, #eaafc8);">
         <div class="my-0 py-5 px-5 text-white">
             <h1 class="pt-5 px-5 header">FLORIDA POLY</h1>
@@ -20,7 +19,6 @@
         </div>
       </div>
       <nuxt />
-    </main>
   </div>
 </template>
 
