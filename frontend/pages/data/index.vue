@@ -1,7 +1,7 @@
 <template>
   <div class="">
-    <b-jumbotron class="mx-0" text-variant="light" header="Data" lead="Overview and sources for our data" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(https://floridapoly.edu/wp-content/uploads/ARC-rendering-sunset_web.jpg); background-size: cover; background-position: center; height: 100%;">
-    </b-jumbotron>
+    <h1>Data</h1>
+    <p>Overview and sources for our data</p>
     <div class="p-5 mx-lg-5">
         <div class="px-md-5 mx-md-5 px-sm-5">
             <h2>About</h2>
