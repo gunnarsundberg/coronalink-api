@@ -83,7 +83,7 @@ class StateOutbreakCumulativeView(ListAPIView):
     """
     API endpoint that allows cumulative outbreak numbers to be viewed.
     """
-    queryset = OutbreakCumulative.objects.filter(region__in=State.objects.all()).filter(date=DisplayDate.objects.all().latest('date').date)
+    queryset = OutbreakCumulative.objects.filter(region__in=State.objects.all()).filter(date=DisplayDate.objects.all().latest('date').date).order_by('region')
     serializer_class = StateOutbreakCumulativeSerializer
     filter_class = StateOutbreakCumulativeFilter
     #permission_classes = [permissions.IsAuthenticated]
