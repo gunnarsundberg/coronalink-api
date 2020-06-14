@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Slide :closeOnNavigation="true" class="bg-dark">
+    <Slide :closeOnNavigation="true">
       <a id="home">
         <span><nuxt-link to="/">Dashboard</nuxt-link></span>
       </a>
