@@ -63,8 +63,10 @@ export default {
     },
     mounted: function () {
         this.updateStateData(this.currentState)
+    },
+    updated: function () {
+        this.updateStateData(this.currentState)
     }
-
 }
 
 </script>
