@@ -16,7 +16,7 @@ export function progressionChartData(dailyData) {
         else {
             var date = dailyData[i]['date'].toString()
             newElement[0] = date.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
-            newElement[1] = dailyData[i]['positive']
+            newElement[1] = dailyData[i]['positiveIncrease']
         }
         newChartData.push(newElement);
     }
