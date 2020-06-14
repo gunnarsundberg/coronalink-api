@@ -12,7 +12,8 @@ export default {
       { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@700&family=Open+Sans:wght@300&display=swap' }
     ],
     script: [
       { src: 'https://www.gstatic.com/charts/loader.js' }
@@ -31,7 +32,9 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    {src: '~/plugins/chartkick'}
+    {src: '~/plugins/chartkick'},
+    { src: '~/plugins/slide-menu', mode: 'client' },
+    {src: '~/plugins/vSelectMenu', mode: 'client'}
   ],
   /*
   ** Nuxt.js dev-modules
