@@ -20,6 +20,8 @@
     "nuxt": "^2.0.0",
     "nuxt-start": "^2.12.2",
     "package.json": "^2.0.1",
+    "v-selectmenu": "^2.0.2",
+    "vue-burger-menu": "^2.0.5",
     "vue-chartkick": "^0.6.0",
     "vuesax": "^3.11.15"
   },
