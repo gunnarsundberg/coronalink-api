@@ -25,10 +25,6 @@ export default {
     },
 
     props: {
-        nationalOutbreak: {
-            type: Array,
-            required: true
-        },
         currentState: {
             required: true
         }
