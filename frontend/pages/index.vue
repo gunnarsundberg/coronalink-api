@@ -10,8 +10,8 @@
       </div>
     </div>
     <div>
-      <NationalView v-if="currentRegion == 'US'" :nationalOutbreak="stateCumulative"></NationalView>
-      <StateView v-if="isState(states,currentRegion)" :nationalOutbreak="stateCumulative" :currentState="currentRegion"></StateView>
+      <NationalView v-if="currentRegion == 'US'" :nationalCumulative="nationalCumulative" :stateCumulative="stateCumulative"></NationalView>
+      <StateView v-if="isState(states,currentRegion)" :currentState="currentRegion"></StateView>
     </div>
   </div>
 </template>
@@ -48,12 +48,19 @@ export default {
   async asyncData () {
       const stateCumulative = await axios.get('http://161.35.60.204/api/v1/outbreak/cumulative/states')
       const states = await axios.get('http://161.35.60.204/api/v1/regions/states')
-      return {stateCumulative: stateCumulative.data, states: states.data}
+      const nationalCumulative = await axios.get('https://covidtracking.com/api/v1/us/daily.json')
+      return {stateCumulative: stateCumulative.data, states: states.data, nationalCumulative: nationalCumulative.data}
   },
   
   computed: {
     newestDate: function () {
       return this.stateCumulative[0]['date']
+    },
+    cumulativeCases: function () {
+
+    },
+    cumulativeDeaths: function () {
+
     }
   },
 
