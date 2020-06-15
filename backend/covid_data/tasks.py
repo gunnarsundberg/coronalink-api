@@ -30,7 +30,7 @@ def update_display_date():
 
 @shared_task
 def recover_county_data(start_date, end_date):
-    iter_date = start_date
+    iter_date = datetime.strptime(start_date, "%Y-%m-%d")
     while iter_date <= end_date:
         with ThreadPoolExecutor() as e:
             for county in County.objects.all():
@@ -39,14 +39,14 @@ def recover_county_data(start_date, end_date):
 
 @shared_task
 def recover_state_data(start_date, end_date):
-    iter_date = start_date
+    iter_date = datetime.strptime(start_date, "%Y-%m-%d")
     while iter_date <= end_date:
         with ThreadPoolExecutor() as e:
             for state in State.objects.all():
                 e.submit(update_state_weather, state, iter_date)
         iter_date = iter_date + timedelta(days=1)
 
-    iter_date = start_date
+    iter_date = datetime.strptime(start_date, "%Y-%m-%d")
     while iter_date <= end_date:
         for state in State.objects.all():
             update_regional_flights(state, iter_date)
