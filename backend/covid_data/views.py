@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from rest_framework.generics import ListAPIView
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 #from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.response import Response
@@ -80,6 +82,8 @@ class StateOutbreakView(ListAPIView):
     filter_class = StateOutbreakFilter
     #permission_classes = [permissions.IsAuthenticated]
 
+    # Cache list view for 24 hours. Cache is invalidated daily by scheduled task
+    @method_decorator(cache_page(60*60*24))
     def list(self, request):
         queryset = self.get_queryset()
         serializer = StateOutbreakSerializer(queryset, many=True)
@@ -108,6 +112,8 @@ class StateOutbreakCumulativeHistoricView(ListAPIView):
     filter_class = StateOutbreakCumulativeFilter
     #permission_classes = [permissions.IsAuthenticated]
 
+    # Cache list view for 24 hours. Cache is invalidated daily by scheduled task
+    @method_decorator(cache_page(60*60*24))
     def list(self, request):
         queryset = self.get_queryset()
         serializer = StateOutbreakCumulativeSerializer(queryset, many=True)
@@ -150,6 +156,8 @@ class StateDailyFlightsView(ListAPIView):
     filter_class = StateDailyFlightsFilter
     #permission_classes = [permissions.IsAuthenticated]
 
+    # Cache list view for 24 hours. Cache is invalidated daily by scheduled task
+    @method_decorator(cache_page(60*60*24))
     def list(self, request):
         queryset = self.get_queryset()
         serializer = StateDailyFlightsSerializer(queryset, many=True)
@@ -177,6 +185,8 @@ class StateDailyWeatherView(ListAPIView):
     queryset = DailyWeather.objects.filter(region__in=State.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date).order_by('-date','region')
     serializer_class = StateDailyWeatherSerializer
 
+    # Cache list view for 24 hours. Cache is invalidated daily by scheduled task
+    @method_decorator(cache_page(60*60*24))
     def list(self, request):
         queryset = self.get_queryset()
         serializer = StateDailyWeatherSerializer(queryset, many=True)
@@ -189,6 +199,8 @@ class CountyDailyWeatherView(ListAPIView):
     queryset = DailyWeather.objects.filter(region__in=County.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date)
     serializer_class = CountyDailyWeatherSerializer
 
+    # Cache list view for 24 hours. Cache is invalidated daily by scheduled task
+    @method_decorator(cache_page(60*60*24))
     def list(self, request):
         queryset = self.get_queryset()
         serializer = CountyDailyWeatherSerializer(queryset, many=True)
