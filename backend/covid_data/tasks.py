@@ -147,14 +147,14 @@ def create_periodic_tasks():
 
     PeriodicTask.objects.create(
         crontab=display_date_schedule,
-        name="Daily cache clear"
-        task='covid_data.tasks.clear_cache'
+        name="Daily cache clear",
+        task='covid_data.tasks.clear_cache',
         enabled=True,
     )
 
     PeriodicTask.objects.create(
         crontab=daily_cache_schedule,
-        name="Create daily cache"
-        task='covid_data.tasks.create_daily_cache'
+        name="Create daily cache",
+        task='covid_data.tasks.create_daily_cache',
         enabled=True
     )
