@@ -1,6 +1,8 @@
 from __future__ import absolute_import, unicode_literals
+from django.core.cache import cache
 from celery import shared_task
 import pytz
+import requests
 from concurrent.futures import ThreadPoolExecutor
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
 from datetime import datetime, date, time, timedelta
@@ -8,6 +10,19 @@ from covid_data.models import County, State, DailyWeather, DisplayDate, DailyFli
 from covid_data.daily_updates.update_outbreak import update_state_outbreak
 from covid_data.daily_updates.update_weather import update_county_weather, update_state_weather
 from covid_data.daily_updates.update_flights import update_regional_flights
+
+cache_endpoints = [
+    # Outbreak endpoint
+    'outbreak/daily/states',
+    'outbreak/cumulative/historic/states',
+
+    # Flights endpoint
+    'flights/daily/states',
+
+    # Weather endpoint
+    'weather/daily/states',
+    'weather/daily/counties'
+]
 
 # Takes in state object and determines whether all counties in state have been updated. Returns boolean.
 def all_counties_updated(state):
@@ -20,6 +35,15 @@ def all_counties_updated(state):
 @shared_task
 def update_state_outbreak_data():
     update_state_outbreak()
+
+@shared_task
+def clear_cache():
+    cache.clear()
+
+@shared_task
+def create_daily_cache():
+    for endpoint in cache_endpoints:
+        requests.get('http://161.35.60.204/api/v1' + endpoint)
 
 @shared_task
 def update_display_date():
@@ -88,11 +112,9 @@ def update_state_data():
 
 def create_periodic_tasks():
     display_date_schedule = CrontabSchedule.objects.create(minute="10", hour="11")
-
+    daily_cache_schedule = CrontabSchedule.objects.create(minute="11", hour="11")
     outbreak_schedule = CrontabSchedule.objects.create(minute="0", hour="2")
-
     outbreak_related_county_schedule = CrontabSchedule.objects.create(minute="30", hour="4, 5, 6, 7, 8, 9, 10")
-
     outbreak_related_state_schedule = CrontabSchedule.objects.create(minute="0", hour="5, 6, 7, 8, 9, 10, 11")
     
     PeriodicTask.objects.create(
@@ -104,7 +126,7 @@ def create_periodic_tasks():
 
     PeriodicTask.objects.create(
         crontab=outbreak_schedule,
-        name='Nightly state outbreak data update',
+        name='Nightly state outbreak update',
         task='covid_data.tasks.update_state_outbreak_data',
         enabled=True,
     )
@@ -121,4 +143,18 @@ def create_periodic_tasks():
         name='Nightly state outbreak-related data',
         task='covid_data.tasks.update_state_data',
         enabled=True,
+    )
+
+    PeriodicTask.objects.create(
+        crontab=display_date_schedule,
+        name="Daily cache clear"
+        task='covid_data.tasks.clear_cache'
+        enabled=True,
+    )
+
+    PeriodicTask.objects.create(
+        crontab=daily_cache_schedule,
+        name="Create daily cache"
+        task='covid_data.tasks.create_daily_cache'
+        enabled=True
     )
