@@ -58,7 +58,7 @@ class StateDailyFlightsFilter(django_filters.FilterSet):
 
     class Meta:
         model = DailyFlights
-        fields = ('state', 'date', 'number_of_inbound_flights', 'number_of_outbound_flights')
+        fields = ('state', 'date',)
 
 class StateDemographicsFilter(django_filters.FilterSet):
     state = django_filters.ModelChoiceFilter(field_name='region__state',
@@ -69,6 +69,8 @@ class StateDemographicsFilter(django_filters.FilterSet):
         model = Demographics
         fields = ('state',)
 
+# TODO: Daily weather filter classes
+
 #
 # Section: DRF views
 #
@@ -77,91 +79,74 @@ class StateOutbreakView(ListAPIView):
     """
     API endpoint that daily outbreak numbers to be viewed.
     """
-    queryset = Outbreak.objects.filter(region__in=State.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date).order_by('-date','region')
     serializer_class = StateOutbreakSerializer
     filter_class = StateOutbreakFilter
     #permission_classes = [permissions.IsAuthenticated]
 
-    # Cache list view for 24 hours. Cache is invalidated daily by scheduled task
-    @method_decorator(cache_page(60*60*24))
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = StateOutbreakSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        queryset = Outbreak.objects.filter(region__in=State.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date).order_by('-date','region')
+        return queryset
 
 class StateOutbreakCumulativeView(ListAPIView):
     """
     API endpoint that allows cumulative outbreak numbers to be viewed.
     """
-    queryset = OutbreakCumulative.objects.filter(region__in=State.objects.all()).filter(date=DisplayDate.objects.all().latest('date').date).order_by('region')
     serializer_class = StateOutbreakCumulativeSerializer
     filter_class = StateOutbreakCumulativeFilter
     #permission_classes = [permissions.IsAuthenticated]
 
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = StateOutbreakCumulativeSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        queryset = OutbreakCumulative.objects.filter(region__in=State.objects.all()).filter(date=DisplayDate.objects.all().latest('date').date).order_by('region')
+        return queryset
+    
 
 class StateOutbreakCumulativeHistoricView(ListAPIView):
     """
     API endpoint that allows historic cumulative outbreak numbers to be viewed.
     """
-    queryset = OutbreakCumulative.objects.filter(region__in=State.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date).order_by('-date','region')
     serializer_class = StateOutbreakCumulativeSerializer
     filter_class = StateOutbreakCumulativeFilter
     #permission_classes = [permissions.IsAuthenticated]
 
-    # Cache list view for 24 hours. Cache is invalidated daily by scheduled task
-    @method_decorator(cache_page(60*60*24))
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = StateOutbreakCumulativeSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        queryset = OutbreakCumulative.objects.filter(region__in=State.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date).order_by('-date','region')
+        return queryset
 
 class StateStayInPlaceView(ListAPIView):
     """
     API endpoint that allows statewide stay in place orders to be viewed.
     """
-    queryset = StayInPlace.objects.filter(region__in=State.objects.all()).order_by('region')
     serializer_class = StateStayInPlaceSerializer
     filter_class = StateStayInPlaceFilter
     #permission_classes = [permissions.IsAuthenticated]
 
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = StateStayInPlaceSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        queryset = StayInPlace.objects.filter(region__in=State.objects.all()).order_by('region')
+        return queryset
 
 class StateSchoolClosureView(ListAPIView):
     """
     API endpoint that allows statewide school closures to be viewed.
     """
-    queryset = SchoolClosure.objects.filter(region__in=State.objects.all()).order_by('region')
     serializer_class = StateSchoolClosureSerializer
     filter_class = StateSchoolClosureFilter
     #permission_classes = [permissions.IsAuthenticated]
 
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = StateSchoolClosureSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        queryset = SchoolClosure.objects.filter(region__in=State.objects.all()).order_by('region')
+        return queryset
 
 class StateDailyFlightsView(ListAPIView):
     """
     API endpoint that allows state inbound and outbound flights to viewed.
     """
-    queryset = DailyFlights.objects.filter(region__in=State.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date).order_by('-date','region')
     serializer_class = StateDailyFlightsSerializer
     filter_class = StateDailyFlightsFilter
     #permission_classes = [permissions.IsAuthenticated]
 
-    # Cache list view for 24 hours. Cache is invalidated daily by scheduled task
-    @method_decorator(cache_page(60*60*24))
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = StateDailyFlightsSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        queryset = DailyFlights.objects.filter(region__in=State.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date).order_by('-date','region')
+        return queryset
 
 class StateDemographicsView(ListAPIView):
     """
@@ -182,29 +167,21 @@ class StateDailyWeatherView(ListAPIView):
     """
     API endpoint listing daily weather by state. All values are averages of county values, including max and mins.
     """
-    queryset = DailyWeather.objects.filter(region__in=State.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date).order_by('-date','region')
     serializer_class = StateDailyWeatherSerializer
 
-    # Cache list view for 24 hours. Cache is invalidated daily by scheduled task
-    @method_decorator(cache_page(60*60*24))
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = StateDailyWeatherSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        queryset = DailyWeather.objects.filter(region__in=State.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date).order_by('-date','region')
+        return queryset
 
 class CountyDailyWeatherView(ListAPIView):
     """
     API endpoint listing daily weather by county.
     """
-    queryset = DailyWeather.objects.filter(region__in=County.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date)
     serializer_class = CountyDailyWeatherSerializer
 
-    # Cache list view for 24 hours. Cache is invalidated daily by scheduled task
-    @method_decorator(cache_page(60*60*24))
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = CountyDailyWeatherSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        queryset = DailyWeather.objects.filter(region__in=County.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date)
+        return queryset
 
 class StateView(ListAPIView):
     """
