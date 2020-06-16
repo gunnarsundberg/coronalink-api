@@ -3,7 +3,9 @@ from rest_framework import routers
 from django.conf.urls import url
 from django.urls import include
 from covid_data.views import StateOutbreakView, StateOutbreakCumulativeView, StateOutbreakCumulativeHistoricView, StateStayInPlaceView, StateSchoolClosureView, StateDailyFlightsView, StateDemographicsView, CountyDemographicsView, StateDailyWeatherView, CountyDailyWeatherView, StateView
+from rest_framework_cache.registry import cache_registry
 
+cache_registry.autodiscover()
 
 urlpatterns = [
     # TODO: States URL, Demographics URL, Medical URL

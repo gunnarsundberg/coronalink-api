@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_postgrespool2',
     'django_redis',
+    'rest_framework_cache',
     'covid_data',
 ]
 

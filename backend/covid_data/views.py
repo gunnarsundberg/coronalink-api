@@ -1,10 +1,6 @@
 from django.shortcuts import render
 from rest_framework.generics import ListAPIView
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
-#from rest_framework import viewsets
 from rest_framework import permissions
-from rest_framework.response import Response
 import django_filters
 from covid_data.models import Region, State, County, Outbreak, OutbreakCumulative, StayInPlace, SchoolClosure, DailyFlights, Demographics, DailyWeather, DisplayDate
 from covid_data.serializers import StateSerializer, StateOutbreakSerializer, StateOutbreakCumulativeSerializer, StateStayInPlaceSerializer, StateSchoolClosureSerializer, StateDailyFlightsSerializer, StateDemographicsSerializer, CountyDemographicsSerializer, StateDailyWeatherSerializer, CountyDailyWeatherSerializer
@@ -99,7 +95,6 @@ class StateOutbreakCumulativeView(ListAPIView):
         queryset = OutbreakCumulative.objects.filter(region__in=State.objects.all()).filter(date=DisplayDate.objects.all().latest('date').date).order_by('region')
         return queryset
     
-
 class StateOutbreakCumulativeHistoricView(ListAPIView):
     """
     API endpoint that allows historic cumulative outbreak numbers to be viewed.
