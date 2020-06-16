@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.generics import ListAPIView
 #from rest_framework import viewsets
 from rest_framework import permissions
+from rest_framework.response import Response
 import django_filters
 from covid_data.models import Region, State, County, Outbreak, OutbreakCumulative, StayInPlace, SchoolClosure, DailyFlights, Demographics, DailyWeather, DisplayDate
 from covid_data.serializers import StateSerializer, StateOutbreakSerializer, StateOutbreakCumulativeSerializer, StateStayInPlaceSerializer, StateSchoolClosureSerializer, StateDailyFlightsSerializer, StateDemographicsSerializer, CountyDemographicsSerializer, StateDailyWeatherSerializer, CountyDailyWeatherSerializer
@@ -79,6 +80,11 @@ class StateOutbreakView(ListAPIView):
     filter_class = StateOutbreakFilter
     #permission_classes = [permissions.IsAuthenticated]
 
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = StateOutbreakSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 class StateOutbreakCumulativeView(ListAPIView):
     """
     API endpoint that allows cumulative outbreak numbers to be viewed.
@@ -87,6 +93,11 @@ class StateOutbreakCumulativeView(ListAPIView):
     serializer_class = StateOutbreakCumulativeSerializer
     filter_class = StateOutbreakCumulativeFilter
     #permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = StateOutbreakCumulativeSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 class StateOutbreakCumulativeHistoricView(ListAPIView):
     """
@@ -97,6 +108,11 @@ class StateOutbreakCumulativeHistoricView(ListAPIView):
     filter_class = StateOutbreakCumulativeFilter
     #permission_classes = [permissions.IsAuthenticated]
 
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = StateOutbreakCumulativeSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 class StateStayInPlaceView(ListAPIView):
     """
     API endpoint that allows statewide stay in place orders to be viewed.
@@ -105,6 +121,11 @@ class StateStayInPlaceView(ListAPIView):
     serializer_class = StateStayInPlaceSerializer
     filter_class = StateStayInPlaceFilter
     #permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = StateStayInPlaceSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 class StateSchoolClosureView(ListAPIView):
     """
@@ -115,6 +136,11 @@ class StateSchoolClosureView(ListAPIView):
     filter_class = StateSchoolClosureFilter
     #permission_classes = [permissions.IsAuthenticated]
 
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = StateSchoolClosureSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 class StateDailyFlightsView(ListAPIView):
     """
     API endpoint that allows state inbound and outbound flights to viewed.
@@ -123,6 +149,11 @@ class StateDailyFlightsView(ListAPIView):
     serializer_class = StateDailyFlightsSerializer
     filter_class = StateDailyFlightsFilter
     #permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = StateDailyFlightsSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 class StateDemographicsView(ListAPIView):
     """
@@ -146,12 +177,22 @@ class StateDailyWeatherView(ListAPIView):
     queryset = DailyWeather.objects.filter(region__in=State.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date).order_by('-date','region')
     serializer_class = StateDailyWeatherSerializer
 
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = StateDailyWeatherSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 class CountyDailyWeatherView(ListAPIView):
     """
     API endpoint listing daily weather by county.
     """
     queryset = DailyWeather.objects.filter(region__in=County.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date)
     serializer_class = CountyDailyWeatherSerializer
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = CountyDailyWeatherSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 class StateView(ListAPIView):
     """
