@@ -25,7 +25,6 @@ class DisplayDate(models.Model):
 class State(Region):
     code = models.CharField(max_length=2)
     fips_code = models.CharField(max_length=2)
-    #update_timezone = models.CharField(max_length=25)
     land_area = models.FloatField()
     #parent_region = models.ForeignKey(Country)
 
@@ -71,15 +70,6 @@ class Airport(models.Model):
 
     def __str__(self):
         return self.airport_name
-
-"""
-class WeatherStation(models.Model):
-    station_name = models.CharField(max_length= 25)
-    station_id = models.CharField(max_length=5)
-
-    def __str__(self):
-        return self.station_name
-"""
 
 #class Demographics(ExportModelOperationsMixin('Demographics'), models.Model):
 class Demographics(models.Model):
@@ -151,13 +141,35 @@ class Outbreak(models.Model):
 #class StayInPlace(ExportModelOperationsMixin('Stay In Place Order'), models.Model):
 class StayInPlace(models.Model):
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
-    order = models.BooleanField()
+    ACTIVE = 'A'
+    EXPIRED = 'E'
+    NONE = 'N'
+    ORDER_CHOICES = [
+        (NONE, 'None'),
+        (ACTIVE, 'Active'),
+        (EXPIRED, 'Expired')
+    ]
+    order = models.CharField(max_length=1, choices=ORDER_CHOICES)
     date = models.DateField()
+
+    class Meta:
+        verbose_name_plural = 'Stay In Place Orders'
+
+    def __str__(self):
+        return str(self.region) + "\t" + str(self.get_order_display())
 
 #class SchoolClosure(ExportModelOperationsMixin('School Closure'), models.Model):
 class SchoolClosure(models.Model):
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
-    order = models.BooleanField()
+    ACTIVE = 'A'
+    EXPIRED = 'E'
+    NONE = 'N'
+    ORDER_CHOICES = [
+        (NONE, 'None'),
+        (ACTIVE, 'Active'),
+        (EXPIRED, 'Expired')
+    ]
+    order = models.CharField(max_length=1, choices=ORDER_CHOICES)
     date = models.DateField()
 
 #class DailyFlights(ExportModelOperationsMixin('Daily Flights'), models.Model):
@@ -180,9 +192,3 @@ class DailyWeather(models.Model):
     uv_index = models.FloatField()
 
     unique_together = ['date', 'region']
-
-"""
-# Meteostat API requires getting weather by station. UV Index is separate and is called by coordinates
-class CountyWeatherStation(WeatherStation):
-    county = models.ForeignKey(County, on_delete=models.CASCADE)
-"""

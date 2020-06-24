@@ -25,6 +25,7 @@ class StateOutbreakCumulativeSerializer(CachedSerializerMixin):
 
 class StateStayInPlaceSerializer(CachedSerializerMixin):
     state = serializers.StringRelatedField(source='region.state')
+    order = serializers.CharField(source='get_order_display')
 
     class Meta:
         model = StayInPlace
@@ -32,7 +33,8 @@ class StateStayInPlaceSerializer(CachedSerializerMixin):
 
 class StateSchoolClosureSerializer(CachedSerializerMixin):
     state = serializers.StringRelatedField(source='region.state')
-
+    order = serializers.CharField(source='get_order_display')
+    
     class Meta:
         model = SchoolClosure
         fields = ['state', 'order', 'date']
