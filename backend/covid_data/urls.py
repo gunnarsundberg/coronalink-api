@@ -4,8 +4,12 @@ from django.conf.urls import url
 from django.urls import include
 from covid_data.views import StateOutbreakView, StateOutbreakCumulativeView, StateOutbreakCumulativeHistoricView, StateStayInPlaceView, StateSchoolClosureView, StateDailyFlightsView, StateDemographicsView, CountyDemographicsView, StateDailyWeatherView, CountyDailyWeatherView, StateView
 from rest_framework_cache.registry import cache_registry
+from django.contrib import admin
 
 cache_registry.autodiscover()
+
+admin.site.site_header = 'Poly COVID Project Administration'
+admin.site.site_title = 'Poly COVID Project'
 
 urlpatterns = [
     # TODO: States URL, Demographics URL, Medical URL
