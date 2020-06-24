@@ -44,4 +44,4 @@ See their website for any questions pertaining to data collection methods and te
 * Dominic Nyfeler - Research Volunteer
 
 ## Contact
-If you encounter an issue with the application or would like to request a new feature, open a new issue on the issues tab of our github page and tag it as a bug, question, or enhancement, depending on which best suits your situation. If you would like to contact our team, reach out to [Dr. Bayazit Karaman](mailto:bkaraman@floridapoly.edu) or [Gunnar Sundberg](mailto:gsundberg@floridapoly.edu).
+If you encounter an issue with the application or would like to request a new feature, open a new issue on the issues tab of our github page and tag it as a `bug`, `question`, or `enhancement`, depending on which best suits your situation. If you spot an error in the data, tag your issue with `data`. If you would like to contact our team, reach out to [Dr. Bayazit Karaman](mailto:bkaraman@floridapoly.edu) or [Gunnar Sundberg](mailto:gsundberg@floridapoly.edu).
