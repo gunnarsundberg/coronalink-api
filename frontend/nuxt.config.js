@@ -5,11 +5,11 @@ export default {
   ** Headers of the page
   */
   head: {
-    title: process.env.npm_package_name || '',
+    title: "Florida Poly COVID Project" || '',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
+      { hid: 'description', name: 'description', content: "Data and insights related to the COVID-19 Pandemic, brought to you by researchers at Florida Polytechnic University." || '' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
@@ -34,7 +34,8 @@ export default {
   plugins: [
     {src: '~/plugins/chartkick'},
     { src: '~/plugins/slide-menu', mode: 'client' },
-    {src: '~/plugins/vSelectMenu', mode: 'client'}
+    {src: '~/plugins/vSelectMenu', mode: 'client'},
+    {src: '~/plugins/choropleth', mode: 'client'}
   ],
   /*
   ** Nuxt.js dev-modules
