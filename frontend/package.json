@@ -24,7 +24,9 @@
     "v-selectmenu": "^2.0.2",
     "vue-burger-menu": "^2.0.5",
     "vue-chartkick": "^0.6.0",
+    "vue-choropleth": "^0.3.1",
     "vue-markdown": "^2.2.4",
+    "vue2-leaflet": "^2.5.2",
     "vuesax": "^3.11.15"
   },
   "devDependencies": {
