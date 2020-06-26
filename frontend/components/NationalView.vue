@@ -1,14 +1,13 @@
 <template>
-    <div class="px-5">
+    <div class="px-md-5">
       <div class="mx-0 px-5">
         <b-card-group deck class="pt-5">
-          <cumulative-cases-card :cumulativeCases="cumulativeCases"></cumulative-cases-card>
+          <numeric-data-card :numericData="cumulativeCases" title="Cumulative Cases"></numeric-data-card>
           <new-cases-chart-card :stateDailyData="nationalCumulative"></new-cases-chart-card>
-          <cumulative-deaths-card :cumulativeDeaths="cumulativeDeaths"></cumulative-deaths-card>
+          <numeric-data-card :numericData="cumulativeDeaths" title="Cumulative Deaths"></numeric-data-card>
         </b-card-group>
-        <b-row class="py-4">
-          <b-col class="col-lg-4 order-2-md">
-            <b-card title="Top States by Cases" class="shadow mb-3">
+        <b-card-group deck class="pt-3">
+            <b-card title="Top States by Cases" class="col-md-4 shadow">
               <div class="card-body">
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
@@ -34,16 +33,13 @@
                 </ul>
               </div>
             </b-card>
-          </b-col>
           
-          <b-col class="col-lg-8 order-1-md">
-            <b-card title="Outbreak Map" class="shadow">
+            <b-card title="Outbreak Map" class="shadow col-md-8">
               <div class="card-body">
-                <geo-chart :data="[['City', 'Cases'], ['US-FL', 70], ['US-NY', 90], ['US-CA', 42], ['US-OR', 51]]" :library="{region: 'US', resolution: 'provinces', sizeAxis: { minValue: 0, maxValue: 100 }, displayMode: 'markers'}"></geo-chart>
+                <outbreak-map :stateCumulativeData="stateCumulative"></outbreak-map>
               </div>
             </b-card>
-          </b-col>
-        </b-row>
+        </b-card-group>
         <div class="py-5">
         </div>
       </div>
@@ -52,9 +48,9 @@
 
 <script>
 import {compareCases, numberWithCommas} from '~/mixins/helper.js'
-import CumulativeCasesCard from '~/components/CumulativeCasesCard.vue'
-import CumulativeDeathsCard from '~/components/CumulativeDeathsCard.vue'
+import NumericDataCard from '~/components/NumericDataCard.vue'
 import NewCasesChartCard from '~/components/NewCasesChartCard.vue'
+import OutbreakMap from '~/components/OutbreakMap.vue'
 
 export default {
   props: {
@@ -69,9 +65,9 @@ export default {
   },
 
   components: {
-    CumulativeCasesCard,
-    CumulativeDeathsCard,
-    NewCasesChartCard
+    NumericDataCard,
+    NewCasesChartCard,
+    OutbreakMap
   },
 
   computed: {
@@ -88,7 +84,6 @@ export default {
     }
   },
   
-  /* Method used by .sort() for sorting logic. Uses number of cases for sorting. */
   methods: {
     numberWithCommas,
   }
