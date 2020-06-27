@@ -6,7 +6,8 @@
             </div>
             <div class="mx-5">
                 <div class="px-5 py-5" align="center">
-                    <line-chart :data="progressionChartData(stateCumulativeData)" :points="false" width="800px" height="400px" class=""></line-chart>
+                    <line-chart v-if="stateCumulativeHistoric" :data="caseChartData(stateCumulativeHistoric)" :points="false" width="800px" height="400px" class=""></line-chart>
+                    <b-spinner v-else style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
                 </div>
             </div>
             <div>
@@ -17,7 +18,9 @@
 </template>
 
 <script>
-import {progressionChartData} from '~/mixins/helper.js'
+import {caseChartData} from '~/mixins/helper.js'
+import axios from 'axios'
+
 export default {
     props: {
         currentState: {
@@ -27,10 +30,34 @@ export default {
         stateCumulativeData: {
             type: Array,
             required: true
+        },
+
+        stateDailyData: {
+            type: Array,
+            required: true
         }
     },
+
+    data () {
+        return {
+            stateCumulativeHistoric: null,
+            allStatesCumulativeHistoric: null
+        }
+    },
+
     methods: {
-        progressionChartData,
-    }
+        caseChartData,
+
+        async getCumulativeHistoricData() {
+            const allStatesCumulativeRequest = await axios.get('http://161.35.60.204/api/v1/outbreak/cumulative/historic/states')
+            const stateCumulativeHistoricRequest = await axios.get('http://161.35.60.204/api/v1/outbreak/cumulative/historic/states?state=' + this.currentState)
+            this.allStatesCumulativeHistoric = allStatesCumulativeRequest.data
+            this.stateCumulativeHistoric = stateCumulativeHistoricRequest.data
+        }
+    },
+
+    created() {
+        this.getCumulativeHistoricData()
+    },
 }
 </script>
