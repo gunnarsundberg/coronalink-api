@@ -8,6 +8,7 @@
 
 <script>
 import VueMarkdown from 'vue-markdown'
+import axios from 'axios'
 
 export default {
   components: {
