@@ -1,13 +1,15 @@
 <template>
-    <div class="px-md-5">
+    <div class="px-lg-5">
       <div class="mx-0 px-5">
         <b-card-group deck class="pt-5">
-          <numeric-data-card :numericData="cumulativeCases" title="Cumulative Cases"></numeric-data-card>
-          <new-cases-chart-card :stateDailyData="nationalCumulative"></new-cases-chart-card>
-          <numeric-data-card :numericData="cumulativeDeaths" title="Cumulative Deaths"></numeric-data-card>
+          <numeric-data-card :data="cumulativeCases" title="Cumulative Cases" class="order-md-2"></numeric-data-card>
+          <div class="d-lg-none d-md pt-md-3 pt-sm-3 w-100"></div>
+          <area-chart-card :data="caseChartData(nationalCumulative)" title="New Cases by Day" :colors="['#ae0001']"></area-chart-card>
+          <div class="d-lg-none d-md pt-md-3 pt-sm-3 w-100"></div>
+          <numeric-data-card :data="cumulativeDeaths" title="Cumulative Deaths"></numeric-data-card>
         </b-card-group>
         <b-card-group deck class="pt-3">
-            <b-card title="Top States by Cases" class="col-md-4 shadow">
+            <b-card title="Top States by Cases" class="col-xl-4 shadow order-md-2 order-sm-2">
               <div class="card-body">
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
@@ -33,12 +35,13 @@
                 </ul>
               </div>
             </b-card>
-          
-            <b-card title="Outbreak Map" class="shadow col-md-8">
-              <div class="card-body">
-                <outbreak-map :stateCumulativeData="stateCumulative"></outbreak-map>
+            
+            <b-card title="Outbreak Map" class="shadow col-xl-8">
+              <div class="px-sm-0 mx-sm-0">
+                <outbreak-map :stateCumulativeData="stateCumulative" class="px-sm-0 mx-sm-0"></outbreak-map>
               </div>
             </b-card>
+            <div class="d-lg-none d-md d-sm pt-md-3 pt-sm-3 w-100"></div>
         </b-card-group>
         <div class="py-5">
         </div>
@@ -47,10 +50,10 @@
 </template>
 
 <script>
-import {compareCases, numberWithCommas} from '~/mixins/helper.js'
-import NumericDataCard from '~/components/NumericDataCard.vue'
-import NewCasesChartCard from '~/components/NewCasesChartCard.vue'
-import OutbreakMap from '~/components/OutbreakMap.vue'
+import {compareCases, numberWithCommas, caseChartData} from '~/mixins/helper.js'
+import NumericDataCard from '~/components/cards/reporting/NumericDataCard.vue'
+import AreaChartCard from '~/components/cards/visualizations/AreaChartCard.vue'
+import OutbreakMap from '~/components/cards/visualizations/OutbreakMap.vue'
 
 export default {
   props: {
@@ -66,7 +69,7 @@ export default {
 
   components: {
     NumericDataCard,
-    NewCasesChartCard,
+    AreaChartCard,
     OutbreakMap
   },
 
@@ -86,6 +89,7 @@ export default {
   
   methods: {
     numberWithCommas,
+    caseChartData
   }
 }
 </script>

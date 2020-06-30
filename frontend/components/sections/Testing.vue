@@ -1,11 +1,12 @@
 <template>
-    <div class="px-5 py-5">
-        <b-card-group deck class="px-5 pt-3">
+    <div class="px-xl-5 py-5">
+        <b-card-group deck class="px-lg-5 pt-3">
             <b-card class="shadow" title="Cumulative Testing">
                 <div class="card-body">
                     <b-table :stacked="true" :items="cumulativeTableData"></b-table>
                 </div>
             </b-card>
+            <div class="d-lg-none d-md d-sm pt-md-3 pt-sm-3 w-100"></div>
             <b-card class="shadow" title="Most Recent Testing">
                 <div class="card-body">
                     <b-table :stacked="true" :items="newTableData"></b-table>
@@ -15,43 +16,40 @@
                 </template>
             </b-card>
         </b-card-group>
-        <b-card-group deck class="pt-3 px-5">
-            <b-card class="shadow col-8" title="Positive Test Percent by Day">
-                <div class="card-body">
-                    <column-chart :data="positivePercentageChartData(stateDailyData)" min="0" :library="{scales: {xAxes: [{ticks: {display: false}}]}}" :label="false" height="150px"></column-chart>
-                </div>
-            </b-card>
-            <numeric-data-card :numericData="positivePercentage" title="Cumulative Positive Test Percentage" class="col-4"></numeric-data-card>
+
+        <b-card-group deck class="pt-3 px-lg-5">
+            <column-chart-card :data="positivePercentageChartData(stateDailyData)" title="Positive Test Percent by Day" :colors="['#ae0001']" class="col-lg-8"></column-chart-card>
+            <div class="d-lg-none d-md d-sm pt-md-3 pt-sm-3 w-100"></div>
+            <numeric-data-card :data="positivePercentage" title="Cumulative Positive Test Percentage" class="col-lg-4"></numeric-data-card>
         </b-card-group>
-        <b-card-group class="px-5 pt-3">
-        <b-card class="shadow" title="Cases vs Tests">
-            <div class="card-body">
-                <column-chart :data="caseTestData" min="0" :stacked="true" :label="false" :discrete="true" ></column-chart>
-            </div>
-        </b-card>
+
+        <b-card-group class="px-lg-5 pt-3">
+            <column-chart-card :data="caseTestData" title="Cases vs Tests" :stacked="true" :discrete="true" :colors="['#ae0001','#2a35c9']"></column-chart-card>
         </b-card-group>
-        <b-card-group deck class="px-5 pt-3">
-            <numeric-data-card v-if="allStatesCumulative" :numericData="rawRank" title="Raw Testing Rank"></numeric-data-card>
-            <numeric-data-card v-if="allStatesCumulative" :numericData="populationWeightedRank" title="Population Weighted Testing Rank" footerText="Measured in tests/person"></numeric-data-card>
-            <numeric-data-card v-if="allStatesCumulative" :numericData="caseWeightedRank" title="Case Weighted Testing Rank" footerText="Measured in tests/case"></numeric-data-card>
+
+        <b-card-group deck class="px-lg-5 pt-3">
+            <numeric-data-card v-if="allStatesCumulative" :data="rawRank" title="Raw Testing Rank"></numeric-data-card>
+            <div class="d-lg-none d-md d-sm pt-md-3 pt-sm-3 w-100"></div>
+            <numeric-data-card v-if="allStatesCumulative" :data="populationWeightedRank" title="Population Weighted Testing Rank" footerText="Measured in tests/person"></numeric-data-card>
+            <div class="d-lg-none d-md d-sm pt-md-3 pt-sm-3 w-100"></div>
+            <numeric-data-card v-if="allStatesCumulative" :data="caseWeightedRank" title="Case Weighted Testing Rank" footerText="Measured in tests/case"></numeric-data-card>
         </b-card-group>
     </div>
 </template>
 
 <script>
 import {numberWithCommas, compareTests, compareWeighted, findObject, getObjectRank, ordinalSuffixOf, caseChartData, testingChartData} from '~/mixins/helper.js'
-import NumericDataCard from '~/components/NumericDataCard.vue'
+import NumericDataCard from '~/components/cards/reporting/NumericDataCard.vue'
+import ColumnChartCard from '~/components/cards/visualizations/ColumnChartCard.vue'
 import axios from 'axios'
 
 export default {
     props: {
         stateDailyData: {
-            type: Array,
             required: true
         },
 
         stateCumulativeData: {
-            type: Array,
             required: true
         },
 
@@ -61,7 +59,8 @@ export default {
     },
 
     components: {
-        NumericDataCard
+        NumericDataCard,
+        ColumnChartCard
     },
 
     data () {
