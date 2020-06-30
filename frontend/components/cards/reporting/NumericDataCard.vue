@@ -1,7 +1,8 @@
 <template>
     <b-card :title="title" class="shadow" align="center" align-v="center">
         <b-card-text align-middle>
-            <h1 class="py-5">{{ numericData }}</h1>
+            <h1 v-if="data" class="py-5">{{ data}}</h1>
+            <loading v-else></loading>
         </b-card-text>
         <template v-if="footerText" v-slot:footer>
             <small class="text-muted">{{ footerText }}</small>
@@ -10,9 +11,11 @@
 </template>
 
 <script>
+import Loading from '~/components/Loading.vue'
+
 export default {
     props: {
-        numericData: {
+        data: {
             required: true
         },
         title: {
@@ -22,6 +25,10 @@ export default {
         footerText: {
             required: false,
         }
+    },
+
+    components: {
+        Loading
     }
 }
 </script>
