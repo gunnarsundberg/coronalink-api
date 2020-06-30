@@ -2,8 +2,8 @@
   <div class="mx-0 my-0 px-0" style="background: #f6f5f3;">
     <div class="px-4 pt-5">
       <div class="px-4">
-        <h3 class="px-5">Overview</h3>
-        <div class="row justify-content-between px-5">
+        <h3 class="px-lg-5">{{ currentRegionStr }} Overview</h3>
+        <div class="row justify-content-between px-lg-5">
           <p class="text-muted px-3">Data from {{ newestDate }}</p>
           <v-selectmenu :data="menu" :query="true" language="en" type="advanced" key-field="code" show-field="name" align="right" class="px-3" :title="title" v-model="currentRegion"></v-selectmenu>
         </div>
@@ -11,7 +11,7 @@
     </div>
     <div>
       <NationalView v-if="currentRegion == 'US'" :nationalCumulative="nationalCumulative" :stateCumulative="stateCumulative"></NationalView>
-      <StateView v-if="isState(states,currentRegion)" :currentState="currentRegion"></StateView>
+      <StateView v-if="isState(states,currentRegion)" :currentState="currentRegion" :currentStateStr="currentRegionStr"></StateView>
     </div>
   </div>
 </template>
@@ -19,6 +19,7 @@
 <script>
 import StateView from '~/components/StateView.vue'
 import NationalView from '~/components/NationalView.vue'
+import { findObject } from '~/mixins/helper.js'
 import axios from 'axios'
 
 export default {
@@ -26,6 +27,7 @@ export default {
     StateView,
     NationalView
   },
+
   data() {
     return {
       currentRegion: 'US',
@@ -44,6 +46,7 @@ export default {
       ]
     }
   },
+  
   /* Initial import for national outbreak data. Called before initial page load. */
   async asyncData () {
       const stateCumulative = await axios.get('http://161.35.60.204/api/v1/outbreak/cumulative/states')
@@ -56,11 +59,15 @@ export default {
     newestDate: function () {
       return this.stateCumulative[0]['date']
     },
-    cumulativeCases: function () {
 
-    },
-    cumulativeDeaths: function () {
-
+    currentRegionStr: function () {
+      if (this.currentRegion == 'US') {
+        return this.currentRegion
+      }
+      else {
+        var regionObject = findObject(this.menu[1].list, 'code', this.currentRegion)
+        return regionObject['name']
+      }
     }
   },
 
