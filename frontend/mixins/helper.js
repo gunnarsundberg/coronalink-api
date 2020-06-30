@@ -5,33 +5,52 @@ export function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-export function caseChartData(dailyData) {
-    var newChartData = []
-    for (var i=dailyData.length - 1; i >= 0 ; i--) {
-        var newElement = [];    
-        if (dailyData[i]['cases']) {
-            newElement[0] = dailyData[i]['date']
-            newElement[1] = dailyData[i]['cases']
-        }
-        else {
-            var date = dailyData[i]['date'].toString()
-            newElement[0] = date.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
-            newElement[1] = dailyData[i]['positiveIncrease']
-        }
-        newChartData.push(newElement);
+export function isLoaded(data) {
+    if (data){
+        return true
     }
-    return newChartData
+    else {
+        return false
+    }
+}
+
+export function caseChartData(dailyData) {
+    if (dailyData) {
+        var newChartData = []
+        for (var i=dailyData.length - 1; i >= 0 ; i--) {
+            var newElement = [];    
+            if (dailyData[i]['cases']) {
+                newElement[0] = dailyData[i]['date']
+                newElement[1] = dailyData[i]['cases']
+            }
+            else {
+                var date = dailyData[i]['date'].toString()
+                newElement[0] = date.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
+                newElement[1] = dailyData[i]['positiveIncrease']
+            }
+            newChartData.push(newElement);
+        }
+        return newChartData
+    }
+    else {
+        return null
+    }
 }
 
 export function testingChartData(dailyData) {
-    var newChartData = []
-    for (var i=dailyData.length - 1; i >= 0 ; i--) {
-        var newElement = [];    
-        newElement[0] = dailyData[i]['date']
-        newElement[1] = dailyData[i]['total_tested']
-        newChartData.push(newElement);
+    if (dailyData) {
+        var newChartData = []
+        for (var i=dailyData.length - 1; i >= 0 ; i--) {
+            var newElement = [];    
+            newElement[0] = dailyData[i]['date']
+            newElement[1] = dailyData[i]['total_tested']
+            newChartData.push(newElement);
+        }
+        return newChartData
     }
-    return newChartData
+    else {
+        return null
+    }
 }
 
 export function compareCases(a, b) {
@@ -55,6 +74,16 @@ export function compareWeighted(a, b) {
     return 0;
 }
 
+export function outbreakDateSort(a, b) {
+    const aDate = new Date(a['date_of_outbreak'])
+    const bDate = new Date(b['date_of_outbreak'])
+
+    if (aDate < bDate) return -1;
+    if (bDate < aDate) return 1;
+
+    return 0;
+}
+
 export function getObjectRank(array, key, value) {
     for (var i = 0; i < array.length; i++) {
         if (array[i][key] === value) {
@@ -71,6 +100,56 @@ export function findObject(array, key, value) {
         }
     }
     return null;
+}
+
+export function findObjectList(array, key, value) {
+    var objects = []
+    for (var i = 0; i < array.length; i++) {
+        if (array[i][key] == value) {
+            objects.push(array[i])
+        }
+    }
+    return objects;
+}
+
+export function findMinObject(array, key) {
+    var min = null
+    for (var i = 0; i < array.length; i++) {
+        if (min === null | array[i][key] < min) {
+            min = array[i][key]
+        }
+    }
+    return min;
+}
+
+export function findMaxObject(array, key) {
+    var max = null
+    for (var i = 0; i < array.length; i++) {
+        if (max === null | array[i][key] > max) {
+            max = array[i][key]
+        }
+    }
+    return max;
+}
+
+export function getObjectsAverage(array, key) {
+    var sum = 0
+    var i = 0
+    for (i; i < array.length; i++) {
+        sum += array[i][key]
+    }
+    return sum/i;
+}
+
+export function getFormattedDateString(date) {
+    var day = date.getDate(), month = date.getMonth() + 1
+    if (day < 10) {
+        day = "0" + day
+    }
+    if (month < 10) {
+        month = "0" + month
+    }
+    return date.getFullYear() + "-" + month + "-" + day
 }
 
 export function ordinalSuffixOf(i) {
