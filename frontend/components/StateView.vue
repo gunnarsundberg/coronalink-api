@@ -1,19 +1,17 @@
 <template>
     <div>
         <div>
-            <div class="px-5 mx-0 py-5">
-                <state-overview v-if="(dataLoaded(stateDailyData) && dataLoaded(stateCumulativeData))" :stateDailyData="stateDailyData" :stateCumulativeData="stateCumulativeData" :currentState="currentState"></state-overview>
-            </div>
-            <state-fast-facts v-if="dataLoaded(stateDemographics)" :currentState="currentState" :stateDemographics="stateDemographics"></state-fast-facts>
-            <state-progression v-if="dataLoaded(stateDailyData)" :stateCumulativeData="stateCumulativeData" :stateDailyData="stateDailyData" :currentState="currentState" class="mx-0 bg-white"></state-progression>
+            <state-overview :stateDailyData="stateDailyData" :stateCumulativeData="stateCumulativeData" :currentState="currentState" class="px-lg-5"></state-overview>
+            <state-fast-facts :currentState="currentState" :currentStateStr="currentStateStr" :stateDemographics="stateDemographics" class="px-lg-5"></state-fast-facts>
+            <state-progression :stateCumulativeData="stateCumulativeData" :stateDailyData="stateDailyData" :currentState="currentState" :currentStateStr="currentStateStr" class="px-lg-5 mx-0 bg-white"></state-progression>
         </div>
     </div>
 </template>
 
 <script>
-import StateOverview from '~/components/StateOverview.vue'
-import StateFastFacts from '~/components/StateFastFacts.vue'
-import StateProgression from '~/components/StateProgression.vue'
+import StateOverview from '~/components/sections/StateOverview.vue'
+import StateFastFacts from '~/components/sections/StateFastFacts.vue'
+import StateProgression from '~/components/sections/StateProgression.vue'
 import axios from 'axios'
 
 export default {
@@ -27,6 +25,10 @@ export default {
         currentState: {
             required: true
         },
+
+        currentStateStr: {
+            required: true
+        }
     },
 
     data() {
@@ -50,7 +52,7 @@ export default {
             
             this.stateDailyData = stateDailyRequest.data
             this.stateCumulativeData = stateCumulativeRequest.data
-            this.stateDemographics = stateDemographics.data;
+            this.stateDemographics = stateDemographics.data
         },
     },
     
@@ -60,10 +62,12 @@ export default {
 
     watch: {
         currentState: function () {
+            this.stateDailyData = null
+            this.stateCumulativeData = null
+            this.stateDemographics = null
             this.updateStateData()
         }
     },
-
 }
 
 </script>
