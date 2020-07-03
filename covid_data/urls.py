@@ -26,11 +26,11 @@ urlpatterns = [
 
     # Weather
     url(r'v1/weather/daily/states', StateDailyWeatherView.as_view()),
-    url(r'v1/weather/daily/counties', CountyDailyWeatherView.as_view()),
+    #url(r'v1/weather/daily/counties', CountyDailyWeatherView.as_view()),
 
     # Demographics
     url(r'v1/demographics/states', StateDemographicsView.as_view()),
-    url(r'v1/demographics/counties', CountyDemographicsView.as_view()),
+    #url(r'v1/demographics/counties', CountyDemographicsView.as_view()),
 
     # Regions
     url(r'v1/regions/states', StateView.as_view()),
