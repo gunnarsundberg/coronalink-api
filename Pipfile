@@ -26,6 +26,7 @@ django-postgrespool2 = "*"
 celery = "~=4.4.3"
 django-redis = "*"
 rest-framework-cache = "*"
+django-allauth = "*"
 
 [requires]
 python_version = "3.7"
