@@ -6,22 +6,34 @@ import requests
 from concurrent.futures import ThreadPoolExecutor
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
 from datetime import datetime, date, time, timedelta
-from covid_data.models import County, State, DailyWeather, DisplayDate, DailyFlights
+from covid_data.models import County, State, DailyWeather, DisplayDate, DailyFlights, Outbreak
 from covid_data.daily_updates.update_outbreak import update_state_outbreak
 from covid_data.daily_updates.update_weather import update_county_weather, update_state_weather
 from covid_data.daily_updates.update_flights import update_regional_flights
 
-cache_endpoints = [
+CACHE_ENDPOINTS = [
     # Outbreak endpoint
     'outbreak/daily/states',
+    'outbreak/cumulative/states',
     'outbreak/cumulative/historic/states',
+    
+    # Distancing
+    'distancing/stayinplace/states',
+    'distancing/schoolclosure/states',
 
-    # Flights endpoint
+    # Flights
     'flights/daily/states',
 
-    # Weather endpoint
+    # Weather
     'weather/daily/states',
-    'weather/daily/counties'
+    #'weather/daily/counties',
+
+    # Demographics
+    'demographics/states',
+    #'demographics/counties',
+
+    # Regions
+    'regions/states',
 ]
 
 # Takes in state object and determines whether all counties in state have been updated. Returns boolean.
@@ -42,7 +54,7 @@ def clear_cache():
 
 @shared_task
 def create_daily_cache():
-    for endpoint in cache_endpoints:
+    for endpoint in CACHE_ENDPOINTS:
         requests.get('http://161.35.60.204/api/v1' + endpoint)
 
 @shared_task
@@ -109,6 +121,37 @@ def update_state_data():
             if not DailyFlights.objects.filter(date=new_display_date).filter(region=state).exists() and not DailyWeather.objects.filter(date=new_display_date).filter(region=state).exists():
                 update_regional_flights(state, new_display_date)
                 update_state_weather(state, new_display_date)
+
+# Check for counties with missing daily weather data and updates both county and state values for those days
+@shared_task
+def check_daily_weather_data():
+    states_to_update = []
+    for record in Outbreak.objects.filter(region__in=State.objects.all()):
+        date = record.date
+        state = record.region
+        for county in County.objects.filter(parent_region=state):
+            if not DailyWeather.objects.filter(date=date).filter(region=county).exists():
+                update_county_weather(county, date)
+
+                # Check if state has been added for this date from another county. If not, add to update list.
+                if (state, date) not in states_to_update:
+                    states_to_update.append((state, date))
+
+    for update_item in states_to_update:
+        update_state_weather(*update_item)
+
+# Check for missing all regions and dates for missing flight records and update flights on those days for the given region.
+@shared_task
+def check_daily_flights():
+    states_to_update = []
+    for record in Outbreak.objects.filter(region__in=State.objects.all()):
+        date = record.date
+        state = record.region
+        if not DailyFlights.objects.filter(date=date).filter(region=state).exists():
+            states_to_update.append((state, date))
+
+    for update_item in states_to_update:
+        update_regional_flights(*update_item)
 
 def create_periodic_tasks():
     display_date_schedule = CrontabSchedule.objects.create(minute="10", hour="11")
