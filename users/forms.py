@@ -1,7 +1,14 @@
 from django import forms
-from users.models import User
+from django.contrib.auth import get_user_model
 from allauth.account.forms import SignupForm
+from django.contrib.auth.forms import UserCreationForm
 
+class CustomUserCreationForm(UserCreationForm):
+
+    class Meta:
+        User = get_user_model()
+        model = User
+        fields = ('username', 'email',)
 
 class CustomSignupForm(SignupForm):
     first_name = forms.CharField(max_length=30, label='First Name')
