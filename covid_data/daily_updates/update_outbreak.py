@@ -2,8 +2,7 @@ import os
 import io
 import math
 import requests
-from datetime import datetime
-from datetime import date
+from datetime import datetime, date
 import pandas as pd
 from covid_data.models import State, County, Outbreak, OutbreakCumulative
 from covid_data.utilities import get_datetime_from_str, api_request_from_str
@@ -102,9 +101,23 @@ def update_all_state_outbreaks(date_to_update):
         outbreak_json = get_outbreak_data_by_state_and_date(state, date_to_update)
         update_state_outbreak(outbreak_json)
     
-# Future release
-def update_county_outbreak(county_to_update, date_to_update):
+def update_county_outbreak():
     url = "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv"
     county_data = requests.get(url).content
-    county_data_dataframe =pd.read_csv(io.StringIO(county_data.decode('utf-8')))
+    county_data_dataframe = pd.read_csv(io.StringIO(county_data.decode('utf-8')), dtype={'fips': 'object'})
+
+    for index, row in county_data_dataframe.iterrows():
+        cases = row['cases']
+        if cases > 24:
+            record_date = datetime.strptime(row['date'], '%Y-%m-%d').date()
+            county_fips = str(row['fips'])
+            deaths = row['deaths']
+
+            try:
+                county = County.objects.get(fips_code=county_fips)
+                outbreak_cumulative_record, created = OutbreakCumulative.objects.update_or_create(region=county, date=record_date, cases=cases, deaths=deaths)
+                outbreak_cumulative_record.save()
+            except:
+                print("No county entered for " + str(row['county']) + ", " + str(row['state']) + " (FIPS: " + county_fips + ")")
+                #continue
 
