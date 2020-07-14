@@ -43,6 +43,12 @@ class County(Region):
     def __str__(self):
         return self.name
 
+class RegionAdjacency(models.Model):
+    region = models.ForeignKey(Region, on_delete=models.CASCADE)
+    adjacent_region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name="neighbor")
+    # Number of people commuting to adjacent region from region, as measure of connectivity
+    commuter_flow = models.IntegerField(null=True)
+
 #class Healthcare(ExportModelOperationsMixin('Healthcare'), models.Model):
 class Healthcare(models.Model):
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
@@ -123,6 +129,8 @@ class Outbreak(models.Model):
     in_icu = models.IntegerField(null=True)
     date_of_outbreak = models.DateField()
     days_since_outbreak = models.IntegerField()
+    # (Cases * commuter flow)/1000 summed for all surrounding counties
+    #case_adjacency_risk = models.FloatField(null=True)
 
     unique_together = ['date', 'region']
 
