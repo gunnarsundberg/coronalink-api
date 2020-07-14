@@ -47,7 +47,7 @@ class RegionAdjacency(models.Model):
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
     adjacent_region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name="neighbor")
     # Number of people commuting to adjacent region from region, as measure of connectivity
-    commuter_flow = models.IntegerField(null=True)
+    edge_weight = models.IntegerField(null=True)
 
 #class Healthcare(ExportModelOperationsMixin('Healthcare'), models.Model):
 class Healthcare(models.Model):
@@ -143,6 +143,18 @@ class Outbreak(models.Model):
             self.date_of_outbreak = self.date
         
         self.days_since_outbreak = (self.date - self.date_of_outbreak).days
+        """
+        if RegionAdjacency.objects.filter(region=self.region).exists():
+            total_adjacency_risk = 0
+            adjacent_regions = RegionAdjacency.objects.filter(region=self.region)
+            for adjacency_record in adjacent_regions:
+                record_risk = OutbreakCumulative.objects.filter(region=adjacency_record.adjacent_region).get(date=self.date).cases
+                record_risk *= adjacency_record.edge_weight
+                record_risk /= 1000
+                total_adjacency_risk += record_risk
+
+            self.case_adjacency_risk = total_adjacency_risk
+        """
 
         super().save(*args, **kwargs)
 
