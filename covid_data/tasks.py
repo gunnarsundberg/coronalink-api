@@ -170,8 +170,8 @@ def create_periodic_tasks():
 
     PeriodicTask.objects.create(
         crontab=outbreak_schedule,
-        name='Nightly state outbreak update',
-        task='covid_data.tasks.update_state_outbreak_data',
+        name='Nightly outbreak update',
+        task='covid_data.tasks.update_outbreak_data',
         enabled=True,
     )
 
