@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
 from datetime import datetime, date, time, timedelta
 from covid_data.models import County, State, DailyWeather, DisplayDate, DailyFlights, Outbreak
-from covid_data.daily_updates.update_outbreak import update_state_outbreak
+from covid_data.daily_updates.update_outbreak import update_state_outbreak, update_county_outbreak
 from covid_data.daily_updates.update_weather import update_county_weather, update_state_weather
 from covid_data.daily_updates.update_flights import update_regional_flights
 
@@ -45,8 +45,9 @@ def all_counties_updated(state):
     return True
 
 @shared_task
-def update_state_outbreak_data():
+def update_outbreak_data():
     update_state_outbreak()
+    update_county_outbreak()
 
 @shared_task
 def clear_cache():
