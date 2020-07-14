@@ -1,6 +1,7 @@
 from django.conf import settings
 from datetime import date
 from tqdm import tqdm
+import pandas as pd
 from timezonefinder import TimezoneFinder
 from covid_data.models import State, County, RegionAdjacency
 
@@ -80,3 +81,25 @@ def import_county_adjacencies():
                     adjacent_counties.append(line_digits)
         # Create record for last county in file
         create_adjacency_record(current_county_fips, adjacent_counties)
+
+def import_edge_weights():
+    commute_flow = pd.read_csv(settings.BASE_DIR + "/covid_data/initial_imports/data/commute_flow.csv", dtype={'res_county_fips': 'object', 'res_state_fips': 'object', 'work_county_fips': 'object', 'work_state_fips': 'object'})
+    for index, row in commute_flow.iterrows():
+        # Try getting County records. If they don't exist, continue
+        try:
+            res_state_fips = str(row['res_state_fips'])
+            work_state_fips = str(row['work_state_fips'])
+
+            county_fips = res_state_fips + str(row['res_county_fips'])
+            adjacent_fips = work_state_fips + str(row['work_county_fips'])
+
+            county = County.objects.get(fips_code=county_fips)
+            adjacent_county = County.objects.get(fips_code=adjacent_fips)
+        except:
+            continue
+
+        # We will only track commuter flow for adjacent counties
+        if RegionAdjacency.objects.filter(region=county).filter(adjacent_region=adjacent_county).exists():
+            adjacency_record = RegionAdjacency.objects.filter(region=county).get(adjacent_region=adjacent_county)
+            adjacency_record.edge_weight = row['number_of_workers']
+            adjacency_record.save()
