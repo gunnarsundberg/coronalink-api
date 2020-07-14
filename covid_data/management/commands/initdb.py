@@ -4,13 +4,13 @@ from datetime import date as d
 from datetime import timedelta
 from covid_data.tasks import create_periodic_tasks
 # Import scripts for non-outbreak-dependent data. This will be recorded regardless of outbreak date
-from covid_data.initial_imports.regions import import_states, import_counties
+from covid_data.initial_imports.regions import import_states, import_counties, import_county_adjacencies
 from covid_data.initial_imports.airports import import_state_airports
 from covid_data.initial_imports.school_closures import import_state_school_closures
 from covid_data.initial_imports.stay_in_place import import_state_stay_in_place
 from covid_data.initial_imports.demographics import import_county_demographics, import_state_demographics
 from covid_data.initial_imports.healthcare import import_state_healthcare
-from covid_data.daily_updates.update_outbreak import update_state_outbreak
+from covid_data.daily_updates.update_outbreak import update_state_outbreak, update_county_outbreak
 from covid_data.daily_updates.update_weather import update_state_weather
 
 # Models
@@ -48,6 +48,9 @@ class Command(BaseCommand):
         import_states(states)
         import_counties(counties)
 
+        print("Importing county adjacencies...")
+        import_county_adjacencies()
+
         # Import airports
         print("Importing airports...")
         import_state_airports(state_airports)
@@ -67,6 +70,9 @@ class Command(BaseCommand):
         # Import outbreak data 
         print("Importing state outbreak data...")
         update_state_outbreak()
+
+        print("Importing county outbreak data...")
+        update_county_outbreak()
 
         # Fix any wrong calculations for outbreak dates caused by import order (see logic in save method)
         print("Verifying outbreak dates...")

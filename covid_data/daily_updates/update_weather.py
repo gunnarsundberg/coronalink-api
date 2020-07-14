@@ -23,7 +23,6 @@ def get_county_uv_index(county, date_to_update):
 
 # update county weather records
 def update_county_weather(county, date_to_update):
-    
     county_weather_json = get_county_weather_json(county, date_to_update)
     
     # Initialize variables
