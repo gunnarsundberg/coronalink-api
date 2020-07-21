@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework.generics import ListAPIView
 from rest_framework import permissions
 import django_filters
-from covid_data.models import Region, State, County, Outbreak, OutbreakCumulative, StayInPlace, SchoolClosure, DailyFlights, Demographics, DailyWeather, DisplayDate
-from covid_api.serializers import StateSerializer, StateOutbreakSerializer, StateOutbreakCumulativeSerializer, StateStayInPlaceSerializer, StateSchoolClosureSerializer, StateDailyFlightsSerializer, StateDemographicsSerializer, CountyDemographicsSerializer, StateDailyWeatherSerializer, CountyDailyWeatherSerializer
+from covid_data.models import Region, State, County, Outbreak, OutbreakCumulative, DailyFlights, Demographics, DailyWeather, DisplayDate
+from covid_api.serializers import StateSerializer, StateOutbreakSerializer, StateOutbreakCumulativeSerializer, StateDailyFlightsSerializer, StateDemographicsSerializer, CountyDemographicsSerializer, StateDailyWeatherSerializer, CountyDailyWeatherSerializer
 
 """
 Section: foreign key filters
@@ -29,6 +29,7 @@ class StateOutbreakCumulativeFilter(django_filters.FilterSet):
         model = OutbreakCumulative
         fields = ('state', 'date',)
 
+"""
 class StateStayInPlaceFilter(django_filters.FilterSet):
     state = django_filters.ModelChoiceFilter(field_name='region__state',
                                             to_field_name='code',
@@ -46,6 +47,7 @@ class StateSchoolClosureFilter(django_filters.FilterSet):
     class Meta:
         model = SchoolClosure
         fields = ('state', 'date',)
+"""
 
 class StateDailyFlightsFilter(django_filters.FilterSet):
     state = django_filters.ModelChoiceFilter(field_name='region__state',
@@ -106,11 +108,11 @@ class StateOutbreakCumulativeHistoricView(ListAPIView):
     def get_queryset(self):
         queryset = OutbreakCumulative.objects.filter(region__in=State.objects.all()).filter(date__lte=DisplayDate.objects.all().latest('date').date).order_by('-date','region')
         return queryset
-
+"""
 class StateStayInPlaceView(ListAPIView):
-    """
+    
     API endpoint that allows statewide stay in place orders to be viewed.
-    """
+
     serializer_class = StateStayInPlaceSerializer
     filter_class = StateStayInPlaceFilter
     #permission_classes = [permissions.IsAuthenticated]
@@ -120,9 +122,9 @@ class StateStayInPlaceView(ListAPIView):
         return queryset
 
 class StateSchoolClosureView(ListAPIView):
-    """
+    
     API endpoint that allows statewide school closures to be viewed.
-    """
+    
     serializer_class = StateSchoolClosureSerializer
     filter_class = StateSchoolClosureFilter
     #permission_classes = [permissions.IsAuthenticated]
@@ -130,6 +132,7 @@ class StateSchoolClosureView(ListAPIView):
     def get_queryset(self):
         queryset = SchoolClosure.objects.filter(region__in=State.objects.all()).order_by('region')
         return queryset
+"""
 
 class StateDailyFlightsView(ListAPIView):
     """

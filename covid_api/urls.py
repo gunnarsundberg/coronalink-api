@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework import routers
 from django.conf.urls import url
-from covid_api.views import StateOutbreakView, StateOutbreakCumulativeView, StateOutbreakCumulativeHistoricView, StateStayInPlaceView, StateSchoolClosureView, StateDailyFlightsView, StateDemographicsView, CountyDemographicsView, StateDailyWeatherView, CountyDailyWeatherView, StateView
+from covid_api.views import StateOutbreakView, StateOutbreakCumulativeView, StateOutbreakCumulativeHistoricView, StateDailyFlightsView, StateDemographicsView, CountyDemographicsView, StateDailyWeatherView, CountyDailyWeatherView, StateView
 from rest_framework_cache.registry import cache_registry
 
 cache_registry.autodiscover()
@@ -13,8 +13,8 @@ urlpatterns = [
     url(r'v1/outbreak/cumulative/historic/states', StateOutbreakCumulativeHistoricView.as_view()),
     
     # Distancing
-    url(r'v1/distancing/stayinplace/states', StateStayInPlaceView.as_view()),
-    url(r'v1/distancing/schoolclosure/states', StateSchoolClosureView.as_view()),
+    #url(r'v1/distancing/stayinplace/states', StateStayInPlaceView.as_view()),
+    #url(r'v1/distancing/schoolclosure/states', StateSchoolClosureView.as_view()),
 
     # Flights
     url(r'v1/flights/daily/states', StateDailyFlightsView.as_view()),

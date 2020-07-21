@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_cache.serializers import CachedSerializerMixin
 from rest_framework_cache.registry import cache_registry
-from covid_data.models import State, Outbreak, OutbreakCumulative, DailyFlights, StayInPlace, SchoolClosure, Demographics, DailyWeather
+from covid_data.models import State, Outbreak, OutbreakCumulative, DailyFlights, Demographics, DailyWeather
 
 class StateSerializer(CachedSerializerMixin):
 
@@ -23,6 +23,7 @@ class StateOutbreakCumulativeSerializer(CachedSerializerMixin):
         model = OutbreakCumulative
         fields = ['state', 'date', 'cases', 'negative_tests', 'total_tested', 'deaths', 'hospitalized', 'in_icu', 'days_since_outbreak', 'date_of_outbreak']
 
+"""
 class StateStayInPlaceSerializer(CachedSerializerMixin):
     state = serializers.StringRelatedField(source='region.state')
     order = serializers.CharField(source='get_order_display')
@@ -38,6 +39,7 @@ class StateSchoolClosureSerializer(CachedSerializerMixin):
     class Meta:
         model = SchoolClosure
         fields = ['state', 'order', 'date']
+"""
 
 class StateDailyFlightsSerializer(CachedSerializerMixin):
     state = serializers.StringRelatedField(source='region.state')
