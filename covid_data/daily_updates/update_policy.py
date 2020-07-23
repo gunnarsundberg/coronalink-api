@@ -69,8 +69,8 @@ def update_policy():
                             policy_date = date.fromordinal(ordinal_date)
                             new_policy, created = DistancingPolicy.objects.update_or_create(
                                 region=county,
-                                date=policy_date,
-                                order_type=policy_type[1]
+                                order_type=policy_type[1],
+                                defaults={'date': policy_date,}
                             )
                             new_policy.save()
 

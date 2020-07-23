@@ -23,19 +23,21 @@ def create_trips_record(region, date, row):
     new_trips_record, created = DailyTrips.objects.update_or_create(
         region=region,
         date=date,
-        population_at_home=population_at_home,
-        population_out_of_home=population_out_of_home,
-        total_trips=total_trips,
-        trips_lt_1=trips_lt_1,
-        trips_1_3=trips_1_3,
-        trips_3_5=trips_3_5,
-        trips_5_10=trips_5_10,
-        trips_10_25=trips_10_25,
-        trips_25_50=trips_25_50,
-        trips_50_100=trips_50_100,
-        trips_100_250=trips_100_250,
-        trips_250_500=trips_250_500,
-        trips_gt_500=trips_gt_500
+        defaults={
+            'population_at_home'=population_at_home,
+            'population_out_of_home'=population_out_of_home,
+            'total_trips'=total_trips,
+            'trips_lt_1'=trips_lt_1,
+            'trips_1_3'=trips_1_3,
+            'trips_3_5'=trips_3_5,
+            'trips_5_10'=trips_5_10,
+            'trips_10_25'=trips_10_25,
+            'trips_25_50'=trips_25_50,
+            'trips_50_100'=trips_50_100,
+            'trips_100_250'=trips_100_250,
+            'trips_250_500'=trips_250_500,
+            'trips_gt_500'=trips_gt_500
+        }
     )
     new_trips_record.save()
 
@@ -51,12 +53,14 @@ def create_mobility_record(region, date, row):
     new_mobility, created = MobilityTrends.objects.update_or_create(
         date=date,
         region=region,
-        retail_and_recreation_trend=retail,
-        grocery_and_pharmacy_trend=grocery,
-        parks_trend=parks,
-        transit_trend=transit,
-        workplace_trend=workplace,
-        residential_trend=residential
+        defaults = {
+            'retail_and_recreation_trend'=retail,
+            'grocery_and_pharmacy_trend'=grocery,
+            'parks_trend'=parks,
+            'transit_trend'=transit,
+            'workplace_trend'=workplace,
+            'residential_trend'=residential
+        }
     )
     new_mobility.save()
 

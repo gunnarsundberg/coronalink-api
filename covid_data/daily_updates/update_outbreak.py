@@ -89,10 +89,19 @@ def update_state_outbreak():
                 cumulative_in_icu = row['inIcuCumulative']
             else:
                 cumulative_in_icu = None
-
-            new_values = {'region': record_state, 'date': record_date, 'cases': cumulative_cases, 'negative_tests': cumulative_negative_tests, 'total_tested': cumulative_total_tested, 'deaths': cumulative_deaths, 'hospitalized': cumulative_hospitalized, 'in_icu': cumulative_in_icu}
             
-            state_outbreak_cumulative, created = OutbreakCumulative.objects.update_or_create(region=record_state, date=record_date, defaults=new_values)
+            state_outbreak_cumulative, created = OutbreakCumulative.objects.update_or_create(
+                region=record_state, 
+                date=record_date, 
+                defaults={
+                    'cases': cumulative_cases, 
+                    'negative_tests': cumulative_negative_tests, 
+                    'total_tested': cumulative_total_tested, 
+                    'deaths': cumulative_deaths, 
+                    'hospitalized': cumulative_hospitalized, 
+                    'in_icu': cumulative_in_icu
+                }
+            )
             state_outbreak_cumulative.save()
 
 def update_all_state_outbreaks(date_to_update):
@@ -115,7 +124,14 @@ def update_county_outbreak():
 
             try:
                 county = County.objects.get(fips_code=county_fips)
-                outbreak_cumulative_record, created = OutbreakCumulative.objects.update_or_create(region=county, date=record_date, cases=cases, deaths=deaths)
+                outbreak_cumulative_record, created = OutbreakCumulative.objects.update_or_create(
+                    region=county, 
+                    date=record_date, 
+                    defaults={
+                        'cases': cases, 
+                        'deaths': deaths
+                    }
+                )
                 outbreak_cumulative_record.save()
             except:
                 print("No county entered for " + str(row['county']) + ", " + str(row['state']) + " (FIPS: " + county_fips + ")")
