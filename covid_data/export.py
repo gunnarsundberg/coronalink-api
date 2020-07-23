@@ -1,45 +1,37 @@
 import os
 import pandas as pd
-from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, date
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from django.conf import settings
 from covid_data.models import State, County, Demographics, CountyUrbanRelation, Outbreak, OutbreakCumulative, DistancingPolicy, DistancingPolicyRollback, MobilityTrends, DailyTrips, DailyFlights, DailyWeather
 from covid_data.daily_updates.update_policy import POLICY_TYPES
 
-def get_policy(index, row):
-    county = County.objects.get(id=row['region'])
-    date = row['date']
-    result = {'index': str(index)}
+def update_region_policies(region, region_df, region_policies, rollback_qs):
     for policy_type in POLICY_TYPES:
-        policy_value = None
-        try:
-            policy = DistancingPolicy.objects.filter(region=county).get(order_type=policy_type[1])
             try:
-                if date >= policy.date and date < DistancingPolicyRollback.objects.get(policy=policy).date:
-                    policy_value = True
-                else:
-                    policy_value = False
+                policy = region_policies.get(order_type=policy_type[1])
+                try:
+                    rollback = rollback_qs.get(policy=policy)
+                    region_df.loc[((region_df.region == region.id) & (region_df.date >= policy.date) & (region_df.date < rollback.date)), policy_type[0]] = True
+                    region_df.loc[((region_df.region == region.id) & ((region_df.date < policy.date) | (region_df.date >= rollback.date))), policy_type[0]] = False
+                except:
+                    region_df.loc[(region_df.region == region.id & region_df.date >= policy.date), policy_type[0]] = True
+                    region_df.loc[(region_df.region == region.id & region_df.date < policy.date), policy_type[0]] = False
             except:
-                if date >= policy.date:
-                    policy_value = True
-                else:
-                    policy_value = False 
-        except:
-            policy_value = False
-            
-        result.update({str(policy_type[0]): policy_value})
-
-def update_policy_value(county_df, record):
-    for policy_type in POLICY_TYPES:
-        county_df.loc[policy_type[0], record['index']] = record[policy_type[0]]
+                region_df.loc[(region_df.region == region.id), policy_type[0]] = False
 
 def export_county_data():
     # Get dataframes for features
-    outbreak_cumulative_df = OutbreakCumulative.as_dataframe(queryset=OutbreakCumulative.objects.filter(region__in=County.objects.all()))
-    demographics_df = Demographics.as_dataframe(queryset=Demographics.objects.filter(region__in=County.objects.all()))
+    county_qs = County.objects.all()
+    policy_qs = DistancingPolicy.objects.all()
+    rollback_qs = DistancingPolicyRollback.objects.all()
+
+    outbreak_cumulative_df = OutbreakCumulative.as_dataframe(queryset=OutbreakCumulative.objects.filter(region__in=county_qs))
+    demographics_df = Demographics.as_dataframe(queryset=Demographics.objects.filter(region__in=county_qs))
     urban_df = CountyUrbanRelation.as_dataframe()
-    mobility_df = MobilityTrends.as_dataframe(queryset=MobilityTrends.objects.filter(region__in=County.objects.all()))
-    trips_df = DailyTrips.as_dataframe(queryset=DailyTrips.objects.filter(region__in=County.objects.all()))
-    weather_df = DailyWeather.as_dataframe(queryset=DailyWeather.objects.filter(region__in=County.objects.all()))
+    mobility_df = MobilityTrends.as_dataframe(queryset=MobilityTrends.objects.filter(region__in=county_qs))
+    trips_df = DailyTrips.as_dataframe(queryset=DailyTrips.objects.filter(region__in=county_qs))
+    weather_df = DailyWeather.as_dataframe(queryset=DailyWeather.objects.filter(region__in=county_qs))
 
     # Merge dataframes
     outbreak_mobility_merge = pd.merge(outbreak_cumulative_df, pd.merge(mobility_df, trips_df, how='left', on=['region', 'date']), how='left', on=['region', 'date'])
@@ -60,23 +52,12 @@ def export_county_data():
     for policy_type in POLICY_TYPES:
         county_df.insert(column=policy_type[0], value=None, loc=12)
 
-    policy_results = []
+    #with ProcessPoolExecutor() as p:
+    for county in county_qs:
+        county_policies = policy_qs.filter(region=county)
+        update_region_policies(county, county_df, county_policies, rollback_qs)
 
-    with ThreadPoolExecutor() as e:
-        for index, row in county_df.iterrows():
-            future = e.submit(get_policy, index, row)
-            policy_results.append(future.result())
-        #e.shutdown(wait=True)
-
-    print(policy_results)
-
-    with ThreadPoolExecutor() as p:
-        for record in policy_results:
-            p.submit(update_policy_value, county_df, record)
-        p.shutdown(wait=True)
-
-    os.chdir(settings.BASE_DIR)
-    county_df.to_csv("data/county_data.csv")
+    county_df.to_csv(settings.BASE_DIR + "/data/county_data.csv", index=False)
     #os.system('git add data/county_data.csv && git push')
     # TODO: add policies for all rows
     #policy_df = DistancingPolicy.as_dataframe()
