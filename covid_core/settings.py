@@ -125,7 +125,11 @@ DATABASES = {
         'PORT': os.environ['DB_PORT'],
     }
 }
-
+DATABASE_POOL_ARGS = {
+    'max_overflow': 100,
+    'pool_size': 5,
+    'recycle': 300
+}
 # Caching
 
 CACHES = {
