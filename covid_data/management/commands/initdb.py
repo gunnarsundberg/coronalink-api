@@ -6,10 +6,12 @@ from covid_data.tasks import create_periodic_tasks
 # Import scripts for non-outbreak-dependent data. This will be recorded regardless of outbreak date
 from covid_data.initial_imports.regions import import_states, import_counties, import_county_adjacencies
 from covid_data.initial_imports.airports import import_state_airports
-from covid_data.initial_imports.demographics import import_county_demographics, import_state_demographics
+from covid_data.initial_imports.demographics import import_county_demographics, import_state_demographics, import_county_urban_relations
 from covid_data.initial_imports.healthcare import import_state_healthcare
 from covid_data.daily_updates.update_outbreak import update_state_outbreak, update_county_outbreak
 from covid_data.daily_updates.update_weather import update_state_weather
+from covid_data.daily_updates.update_mobility import update_mobility_trends, update_trips
+from covid_data.daily_updates.update_policy import update_policy
 
 # Models
 from covid_data.models import State, Outbreak, OutbreakCumulative, DisplayDate
@@ -78,6 +80,17 @@ class Command(BaseCommand):
         # Import demographics
         import_county_demographics()
         import_state_demographics()
+        import_county_urban_relations()
+
+        # Import Policy
+        print("Importing policy responses...")
+        update_policy()
+        
+        # Import mobility data
+        print("Importing mobility trends...")
+        update_mobility_trends()
+        print("Importing daily trips...")
+        update_trips()
 
         for outbreak in Outbreak.objects.filter(region__in=State.objects.all()):
             date = outbreak.date
