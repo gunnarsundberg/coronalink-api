@@ -2,7 +2,7 @@ import os
 import io
 import math
 import requests
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import pandas as pd
 from covid_data.models import State, County, Outbreak, OutbreakCumulative
 from covid_data.utilities import get_datetime_from_str, api_request_from_str
@@ -136,4 +136,27 @@ def update_county_outbreak():
             except:
                 print("No county entered for " + str(row['county']) + ", " + str(row['state']) + " (FIPS: " + county_fips + ")")
                 #continue
+            try:
+                county = County.objects.get(fips_code=county_fips)
+                
+                day_before = record_date - timedelta(days=1)
 
+                day_before_df = county_data_dataframe[(county_data_dataframe.fips == county_fips) & (county_data_dataframe.date == str(day_before))]
+                index = day_before_df.index[0]
+
+                cases = cases - day_before_df['cases'][index]
+                if cases < 0:
+                    cases = 0
+                deaths = deaths - day_before_df['deaths'][index]
+            
+                outbreak_record, created = Outbreak.objects.update_or_create(
+                    region=county, 
+                    date=record_date, 
+                    defaults={
+                        'cases': cases, 
+                        'deaths': deaths
+                    }
+                )
+            except:
+                print()
+            
