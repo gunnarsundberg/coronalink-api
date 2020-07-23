@@ -10,33 +10,11 @@ from covid_data.models import County, State, DailyWeather, DisplayDate, DailyFli
 from covid_data.daily_updates.update_outbreak import update_state_outbreak, update_county_outbreak
 from covid_data.daily_updates.update_weather import update_county_weather, update_state_weather
 from covid_data.daily_updates.update_flights import update_regional_flights
+from covid_data.daily_updates.update_mobility import update_trips, update_mobility_trends
+from covid_data.daily_updates.update_policy import update_policy
 
-CACHE_ENDPOINTS = [
-    # Outbreak endpoint
-    'outbreak/daily/states',
-    'outbreak/cumulative/states',
-    'outbreak/cumulative/historic/states',
-    
-    # Distancing
-    'distancing/stayinplace/states',
-    'distancing/schoolclosure/states',
 
-    # Flights
-    'flights/daily/states',
-
-    # Weather
-    'weather/daily/states',
-    #'weather/daily/counties',
-
-    # Demographics
-    'demographics/states',
-    #'demographics/counties',
-
-    # Regions
-    'regions/states',
-]
-
-# Takes in state object and determines whether all counties in state have been updated. Returns boolean.
+# Helper function that takes in state object and determines whether all counties in state have been updated. Returns boolean.
 def all_counties_updated(state):
     current_display_date = DisplayDate.objects.all().latest('date').date
     for county in County.objects.filter(parent_region=state):
@@ -44,53 +22,29 @@ def all_counties_updated(state):
             return False
     return True
 
+"""
+Section: Outbreak Tasks
+"""
 @shared_task
 def update_outbreak_data():
     update_state_outbreak()
     update_county_outbreak()
 
+"""
+Section: CSV Import Tasks
+"""
 @shared_task
-def clear_cache():
-    cache.clear()
-
-@shared_task
-def create_daily_cache():
-    for endpoint in CACHE_ENDPOINTS:
-        requests.get('http://161.35.60.204/api/v1' + endpoint)
-
-@shared_task
-def update_display_date():
-    previous_display_date = DisplayDate.objects.all().latest('date').date
-    new_display_date = previous_display_date + timedelta(days=1)
-    new_display_date_object = DisplayDate.objects.create(date=new_display_date)
-    new_display_date_object.save()
+def update_mobility_data():
+    update_mobility_trends()
+    update_trips()
 
 @shared_task
-def recover_county_data(start_date, end_date):
-    iter_date = datetime.strptime(start_date, "%Y-%m-%d")
-    end_date_datetime = datetime.strptime(end_date, "%Y-%m-%d")
-    while iter_date <= end_date_datetime:
-        with ThreadPoolExecutor() as e:
-            for county in County.objects.all():
-                e.submit(update_county_weather, county, iter_date)
-        iter_date = iter_date + timedelta(days=1)
+def update_policy_data():
+    update_policy()
 
-@shared_task
-def recover_state_data(start_date, end_date):
-    iter_date = datetime.strptime(start_date, "%Y-%m-%d")
-    end_date_datetime = datetime.strptime(end_date, "%Y-%m-%d")
-    while iter_date <= end_date_datetime:
-        with ThreadPoolExecutor() as e:
-            for state in State.objects.all():
-                e.submit(update_state_weather, state, iter_date)
-        iter_date = iter_date + timedelta(days=1)
-
-    iter_date = datetime.strptime(start_date, "%Y-%m-%d")
-    while iter_date <= end_date_datetime:
-        for state in State.objects.all():
-            update_regional_flights(state, iter_date)
-        iter_date = iter_date + timedelta(days=1)
-
+"""
+Section: TZ-Aware Tasks
+"""
 # TODO: In future, make updates dependent on date of latest outbreak record rather than assuming dates. Also, update days between if they were missed.
 @shared_task
 def update_county_data():
@@ -123,6 +77,57 @@ def update_state_data():
                 update_regional_flights(state, new_display_date)
                 update_state_weather(state, new_display_date)
 
+"""
+Section: Cache Tasks
+"""
+CACHE_ENDPOINTS = [
+    # Outbreak endpoint
+    'outbreak/daily/states',
+    'outbreak/cumulative/states',
+    'outbreak/cumulative/historic/states',
+    
+    # Distancing
+    'distancing/stayinplace/states',
+    'distancing/schoolclosure/states',
+
+    # Flights
+    'flights/daily/states',
+
+    # Weather
+    'weather/daily/states',
+    #'weather/daily/counties',
+
+    # Demographics
+    'demographics/states',
+    #'demographics/counties',
+
+    # Regions
+    'regions/states',
+]
+
+@shared_task
+def clear_cache():
+    cache.clear()
+
+@shared_task
+def create_daily_cache():
+    for endpoint in CACHE_ENDPOINTS:
+        requests.get('http://161.35.60.204/api/v1' + endpoint)
+
+"""
+Section: Utility Tasks
+"""
+@shared_task
+def update_display_date():
+    previous_display_date = DisplayDate.objects.all().latest('date').date
+    new_display_date = previous_display_date + timedelta(days=1)
+    new_display_date_object = DisplayDate.objects.create(date=new_display_date)
+    new_display_date_object.save()
+
+
+"""
+Section: Checks and Recovery
+"""
 # Check for counties with missing daily weather data and updates both county and state values for those days
 @shared_task
 def check_daily_weather_data():
@@ -154,6 +159,35 @@ def check_daily_flights():
     for update_item in states_to_update:
         update_regional_flights(*update_item)
 
+@shared_task
+def recover_county_data(start_date, end_date):
+    iter_date = datetime.strptime(start_date, "%Y-%m-%d")
+    end_date_datetime = datetime.strptime(end_date, "%Y-%m-%d")
+    while iter_date <= end_date_datetime:
+        with ThreadPoolExecutor() as e:
+            for county in County.objects.all():
+                e.submit(update_county_weather, county, iter_date)
+        iter_date = iter_date + timedelta(days=1)
+
+@shared_task
+def recover_state_data(start_date, end_date):
+    iter_date = datetime.strptime(start_date, "%Y-%m-%d")
+    end_date_datetime = datetime.strptime(end_date, "%Y-%m-%d")
+    while iter_date <= end_date_datetime:
+        with ThreadPoolExecutor() as e:
+            for state in State.objects.all():
+                e.submit(update_state_weather, state, iter_date)
+        iter_date = iter_date + timedelta(days=1)
+
+    iter_date = datetime.strptime(start_date, "%Y-%m-%d")
+    while iter_date <= end_date_datetime:
+        for state in State.objects.all():
+            update_regional_flights(state, iter_date)
+        iter_date = iter_date + timedelta(days=1)
+
+"""
+Section: Task Scheduling
+"""
 def create_periodic_tasks():
     display_date_schedule = CrontabSchedule.objects.create(minute="10", hour="11")
     daily_cache_schedule = CrontabSchedule.objects.create(minute="11", hour="11")
