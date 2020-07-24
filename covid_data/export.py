@@ -48,6 +48,7 @@ def export_county_data():
     
     # Drop columns not relevant to county data
     county_df = county_df.drop(labels=['county'], axis=1)
+    county_df = county_df.drop_duplicates()
     county_df = county_df.sort_values(by=['region', 'date'])
     
     # Add policy columns
