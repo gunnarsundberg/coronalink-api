@@ -20,7 +20,7 @@ admin.site.site_header = 'Poly COVID Project Administration'
 admin.site.site_title = 'Poly COVID Project'
 
 urlpatterns = [
-    #path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('', include('users.urls')),
     path('', include('covid_data.urls')),
     path('', include('django_prometheus.urls')),
