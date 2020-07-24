@@ -24,19 +24,19 @@ def create_trips_record(region, date, row):
         region=region,
         date=date,
         defaults={
-            'population_at_home'=population_at_home,
-            'population_out_of_home'=population_out_of_home,
-            'total_trips'=total_trips,
-            'trips_lt_1'=trips_lt_1,
-            'trips_1_3'=trips_1_3,
-            'trips_3_5'=trips_3_5,
-            'trips_5_10'=trips_5_10,
-            'trips_10_25'=trips_10_25,
-            'trips_25_50'=trips_25_50,
-            'trips_50_100'=trips_50_100,
-            'trips_100_250'=trips_100_250,
-            'trips_250_500'=trips_250_500,
-            'trips_gt_500'=trips_gt_500
+            'population_at_home': population_at_home,
+            'population_out_of_home': population_out_of_home,
+            'total_trips': total_trips,
+            'trips_lt_1': trips_lt_1,
+            'trips_1_3': trips_1_3,
+            'trips_3_5': trips_3_5,
+            'trips_5_10': trips_5_10,
+            'trips_10_25': trips_10_25,
+            'trips_25_50': trips_25_50,
+            'trips_50_100': trips_50_100,
+            'trips_100_250': trips_100_250,
+            'trips_250_500': trips_250_500,
+            'trips_gt_500': trips_gt_500
         }
     )
     new_trips_record.save()
