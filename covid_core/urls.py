@@ -18,7 +18,7 @@ from django.urls import path, include
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', include('admin.site.urls')),
     path('', include('users.urls')),
     path('', include('covid_data.urls')),
     path('', include('django_prometheus.urls')),

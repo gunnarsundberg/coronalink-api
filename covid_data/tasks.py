@@ -29,6 +29,8 @@ Section: Outbreak Tasks
 def update_outbreak_data():
     update_state_outbreak()
     update_county_outbreak()
+    for outbreak in Outbreak.objects.filter(region__in=County.objects.all()):
+	    outbreak.get_adjacency_risk()
 
 """
 Section: CSV Import Tasks
