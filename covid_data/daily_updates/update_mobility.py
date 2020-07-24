@@ -54,12 +54,12 @@ def create_mobility_record(region, date, row):
         date=date,
         region=region,
         defaults = {
-            'retail_and_recreation_trend'=retail,
-            'grocery_and_pharmacy_trend'=grocery,
-            'parks_trend'=parks,
-            'transit_trend'=transit,
-            'workplace_trend'=workplace,
-            'residential_trend'=residential
+            'retail_and_recreation_trend': retail,
+            'grocery_and_pharmacy_trend': grocery,
+            'parks_trend': parks,
+            'transit_trend': transit,
+            'workplace_trend': workplace,
+            'residential_trend': residential
         }
     )
     new_mobility.save()
