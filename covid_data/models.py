@@ -216,10 +216,34 @@ class Outbreak(PandasModelMixin):
     in_icu = models.IntegerField(null=True)
     date_of_outbreak = models.DateField()
     days_since_outbreak = models.IntegerField()
-    # (Cases * commuter flow)/1000 summed for all surrounding counties
-    #case_adjacency_risk = models.FloatField(null=True)
+    # (Cases * commuter flow)/(number of people staying home) summed for all surrounding counties
+    case_adjacency_risk = models.FloatField(null=True)
 
     unique_together = ['date', 'region']
+
+    def get_adjacency_risk(self):
+        if RegionAdjacency.objects.filter(region=self.region).exists():
+            total_adjacency_risk = 0
+            adjacent_regions = RegionAdjacency.objects.filter(region=self.region)
+            for adjacency_record in adjacent_regions:
+                try:
+                    adjacent_cases = Outbreak.objects.filter(region=adjacency_record.adjacent_region).get(date=self.date).cases
+                    if adjacent_cases > 0:
+                        record_risk = adjacent_cases
+                    else:
+                        adjacent_cases = 0
+                    record_risk *= adjacency_record.edge_weight
+                    population_at_home = DailyTrips.objects.filter(date=self.date).get(region=self.region).population_at_home
+                    if population_at_home > 0:
+                        record_risk /= population_at_home
+                    total_adjacency_risk += record_risk
+                except:
+                    continue
+            self.case_adjacency_risk = round(total_adjacency_risk, ndigits=1)
+            self.save()
+        else:
+            self.case_adjacency_risk = 0
+            self.save()
 
     def save(self, *args, **kwargs):
         # Check if there are existing outbreaks for this state
@@ -230,18 +254,6 @@ class Outbreak(PandasModelMixin):
             self.date_of_outbreak = self.date
         
         self.days_since_outbreak = (self.date - self.date_of_outbreak).days
-        """
-        if RegionAdjacency.objects.filter(region=self.region).exists():
-            total_adjacency_risk = 0
-            adjacent_regions = RegionAdjacency.objects.filter(region=self.region)
-            for adjacency_record in adjacent_regions:
-                record_risk = OutbreakCumulative.objects.filter(region=adjacency_record.adjacent_region).get(date=self.date).cases
-                record_risk *= adjacency_record.edge_weight
-                record_risk /= 1000
-                total_adjacency_risk += record_risk
-
-            self.case_adjacency_risk = total_adjacency_risk
-        """
 
         super().save(*args, **kwargs)
 
