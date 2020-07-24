@@ -158,5 +158,5 @@ def update_county_outbreak():
                     }
                 )
             except:
-                print()
+                continue
             
