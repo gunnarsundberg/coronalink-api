@@ -27,6 +27,7 @@ def export_county_data():
     rollback_qs = DistancingPolicyRollback.objects.all()
 
     outbreak_cumulative_df = OutbreakCumulative.as_dataframe(queryset=OutbreakCumulative.objects.filter(region__in=county_qs))
+    outbreak_df = Outbreak.as_dataframe(queryset=Outbreak.objects.filter(region__in=county_qs))
     demographics_df = Demographics.as_dataframe(queryset=Demographics.objects.filter(region__in=county_qs))
     urban_df = CountyUrbanRelation.as_dataframe()
     mobility_df = MobilityTrends.as_dataframe(queryset=MobilityTrends.objects.filter(region__in=county_qs))
@@ -34,7 +35,8 @@ def export_county_data():
     weather_df = DailyWeather.as_dataframe(queryset=DailyWeather.objects.filter(region__in=county_qs))
 
     # Merge dataframes
-    outbreak_mobility_merge = pd.merge(outbreak_cumulative_df, pd.merge(mobility_df, trips_df, how='left', on=['region', 'date']), how='left', on=['region', 'date'])
+    outbreak_merge = pd.merge(outbreak_cumulative_df[['region', 'date', 'date_of_outbreak', 'days_since_outbreak', 'cases', 'deaths']], outbreak_df[['cases', 'deaths', 'case_adjacency_risk', 'region', 'date']], on=['region', 'date'], suffixes=("_cumulative", "_new"))
+    outbreak_mobility_merge = pd.merge(outbreak_merge, pd.merge(mobility_df, trips_df, how='left', on=['region', 'date']), how='left', on=['region', 'date'])
     daily_data = pd.merge(outbreak_mobility_merge, weather_df, how='left', on=['region', 'date'])
     demographics_merge = pd.merge(demographics_df, urban_df, how='left', left_on='region', right_on='county')
     county_df = pd.merge(daily_data, demographics_merge, how='left', on='region')
@@ -45,12 +47,12 @@ def export_county_data():
     print(county_df)
     
     # Drop columns not relevant to county data
-    county_df = county_df.drop(labels=['county', 'negative_tests', 'total_tested', 'hospitalized', 'in_icu'], axis=1)
+    county_df = county_df.drop(labels=['county'], axis=1)
     county_df = county_df.sort_values(by=['region', 'date'])
     
     # Add policy columns
     for policy_type in POLICY_TYPES:
-        county_df.insert(column=policy_type[0], value=None, loc=12)
+        county_df.insert(column=policy_type[0], value=None, loc=15)
 
     #with ProcessPoolExecutor() as p:
     for county in county_qs:
@@ -58,9 +60,6 @@ def export_county_data():
         update_region_policies(county, county_df, county_policies, rollback_qs)
 
     county_df.to_csv(settings.BASE_DIR + "/data/county_data.csv", index=False)
-    #os.system('git add data/county_data.csv && git push')
-    # TODO: add policies for all rows
-    #policy_df = DistancingPolicy.as_dataframe()
     return county_df
 
 def export_state_data():
