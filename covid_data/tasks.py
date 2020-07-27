@@ -175,7 +175,7 @@ def check_daily_weather_data():
     print("Found " + str(counties_to_update) + " counties with missing weather data.")
     for update_item in states_to_update:
         update_state_weather(*update_item)
-    print("Updated " str(len(states_to_update)) + " state weather data records."
+    print("Updated " + str(len(states_to_update)) + " state weather data records."
 
 # Check for missing all regions and dates for missing flight records and update flights on those days for the given region.
 @shared_task
@@ -190,7 +190,7 @@ def check_daily_flights():
 
     for update_item in states_to_update:
         update_regional_flights(*update_item)
-    print("Updated " str(len(states_to_update)) + " state daily flight records."
+    print("Updated " + str(len(states_to_update)) + " state daily flight records."
 
 @shared_task
 def recover_county_data(start_date, end_date):
