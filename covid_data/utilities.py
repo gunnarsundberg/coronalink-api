@@ -33,11 +33,37 @@ def get_datetime_from_str(datetime_str):
     day = int(datetime_str[6:8])
     return date(year=year, month=month, day=day)
 
+class FailedRequest(Exception):
+    """Exception raised for errors in JSON requests.
+
+    Attributes:
+        response -- response object which caused the error
+        message -- explanation of the error
+    """
+
+    def __init__(self, response, message="Request failed or did not return a JSON response."):
+        self.response = response
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return f'{self.message} Response code: {self.response.status_code} Response content: {self.response.text}'
+
 # Takes in api url as str and returns json response
 def api_request_from_str(url_str):
-    for i in range(6):
+    # Try request 4 times, waiting 2 seconds between each failed attempt.
+    for i in range(5):
         try:
             response = requests.get(url_str)
-            return response.json()
+            if response.status_code == 200:
+                return response.json()
+            else:
+                raise FailedRequest(response)
         except:
             t.sleep(2)
+
+    response = requests.get(url_str)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise FailedRequest(response)
