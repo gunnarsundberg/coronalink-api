@@ -27,22 +27,33 @@ Section: Outbreak Tasks
 """
 @shared_task
 def update_outbreak_data():
+    print("Performing state outbreak update...")
     update_state_outbreak()
+    print("State outbreak update complete.")
+    print("Performing county outbreak update...")
     update_county_outbreak()
+    print("Performing update of case adjacency risk...")
     for outbreak in Outbreak.objects.filter(region__in=County.objects.all()):
 	    outbreak.get_adjacency_risk()
+    print("Case adjacency update complete.")
 
 """
 Section: CSV Import Tasks
 """
 @shared_task
 def update_mobility_data():
+    print("Performing update of mobility trends..")
     update_mobility_trends()
+    print("Mobility trends update complete.")
+    print("Performing update of daily trip data...")
     update_trips()
+    print("Trip data update complete.")
 
 @shared_task
 def update_policy_data():
+    print("Updating policy data...")
     update_policy()
+    print("Policy data updated.")
 
 """
 Section: TZ-Aware Tasks
@@ -50,6 +61,8 @@ Section: TZ-Aware Tasks
 # TODO: In future, make updates dependent on date of latest outbreak record rather than assuming dates. Also, update days between if they were missed.
 @shared_task
 def update_county_data():
+    print("Updating county weather data...")
+    counties_updated = 0
     previous_display_date = DisplayDate.objects.all().latest('date').date
     new_display_date = previous_display_date + timedelta(days=1)
     today = date.today()
@@ -68,9 +81,15 @@ def update_county_data():
             with ThreadPoolExecutor() as e:
                 for county in County.objects.filter(timezone_str=tz_str):
                     e.submit(update_county_weather, county, new_display_date)
+                    counties_updated +=1
+
+    print("Updated weather data for " + str(counties_updated) + " counties.")
 
 @shared_task
 def update_state_data():
+    print("Updating state weather and flight data...")
+    state_flights = 0
+    state_weather = 0
     previous_display_date = DisplayDate.objects.all().latest('date').date
     new_display_date = previous_display_date + timedelta(days=1)
     for state in State.objects.all():
@@ -78,6 +97,8 @@ def update_state_data():
             if not DailyFlights.objects.filter(date=new_display_date).filter(region=state).exists() and not DailyWeather.objects.filter(date=new_display_date).filter(region=state).exists():
                 update_regional_flights(state, new_display_date)
                 update_state_weather(state, new_display_date)
+
+    print("Updated weather data for " + str(state_weather) + " states and flight data for " + str(state_flights) + " states.")
 
 """
 Section: Cache Tasks
@@ -110,11 +131,13 @@ CACHE_ENDPOINTS = [
 @shared_task
 def clear_cache():
     cache.clear()
+    print("Cleared cache.")
 
 @shared_task
 def create_daily_cache():
     for endpoint in CACHE_ENDPOINTS:
         requests.get('http://161.35.60.204/api/v1' + endpoint)
+    print("Updated cache.")
 
 """
 Section: Utility Tasks
@@ -125,6 +148,7 @@ def update_display_date():
     new_display_date = previous_display_date + timedelta(days=1)
     new_display_date_object = DisplayDate.objects.create(date=new_display_date)
     new_display_date_object.save()
+    print("Updated display date to " + str(new_display_date))
 
 
 """
@@ -133,24 +157,30 @@ Section: Checks and Recovery
 # Check for counties with missing daily weather data and updates both county and state values for those days
 @shared_task
 def check_daily_weather_data():
+    print("Fixing missing weather data...")
+    counties_to_update = 0
     states_to_update = []
     for record in Outbreak.objects.filter(region__in=State.objects.all()):
         date = record.date
         state = record.region
         for county in County.objects.filter(parent_region=state):
             if not DailyWeather.objects.filter(date=date).filter(region=county).exists():
+                counties_to_update += 1
                 update_county_weather(county, date)
 
                 # Check if state has been added for this date from another county. If not, add to update list.
                 if (state, date) not in states_to_update:
                     states_to_update.append((state, date))
 
+    print("Found " + str(counties_to_update) + " counties with missing weather data.")
     for update_item in states_to_update:
         update_state_weather(*update_item)
+    print("Updated " str(len(states_to_update)) + " state weather data records."
 
 # Check for missing all regions and dates for missing flight records and update flights on those days for the given region.
 @shared_task
 def check_daily_flights():
+    print("Fixing missing flight data...")
     states_to_update = []
     for record in Outbreak.objects.filter(region__in=State.objects.all()):
         date = record.date
@@ -160,6 +190,7 @@ def check_daily_flights():
 
     for update_item in states_to_update:
         update_regional_flights(*update_item)
+    print("Updated " str(len(states_to_update)) + " state daily flight records."
 
 @shared_task
 def recover_county_data(start_date, end_date):
