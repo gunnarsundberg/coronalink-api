@@ -34,10 +34,9 @@ def get_inbound_flights(inbound_flights_json):
         for flight in inbound_flights_json:
             if flight:
                 number_of_inbound_flights += 1
+        return number_of_inbound_flights
     except:
         print("Couldn't get flight data")
-        #print("Couldn't get inbound flights for " + str(airport.airport_name) + " on " + str(flights_date))
-    return number_of_inbound_flights
 
 def get_outbound_flights(outbound_flights_json):
     number_of_outbound_flights = 0
@@ -45,21 +44,19 @@ def get_outbound_flights(outbound_flights_json):
         for flight in outbound_flights_json:
             if flight:
                 number_of_outbound_flights += 1
+        return number_of_outbound_flights
     except:
         print("Couldn't get flight data")
-        #print("Couldn't get outbound flights for " + str(airport.airport_name) + " on " + str(flights_date))
-    return number_of_outbound_flights
 
 def get_flights_by_airport(airport, flights_date):
     begin_timestamp, end_timestamp = get_local_timestamp(airport.timezone, flights_date)
 
     t.sleep(random())    
-    inbound_flights_request_str = "https://" + username + ":" + password + "@opensky-network.org/api/flights/arrival?airport=" + str(airport.icao_code) + "&begin=" + str(begin_timestamp) + "&end=" + str(end_timestamp)
+    inbound_flights_url = "https://" + username + ":" + password + "@opensky-network.org/api/flights/arrival?airport=" + str(airport.icao_code) + "&begin=" + str(begin_timestamp) + "&end=" + str(end_timestamp)
     t.sleep(random())
-    outbound_flights_request_str = "https://" + username + ":" + password + "@opensky-network.org/api/flights/departure?airport=" + str(airport.icao_code) + "&begin=" + str(begin_timestamp) + "&end=" + str(end_timestamp)
-
-    inbound_flights_json = api_request_from_str(inbound_flights_request_str)
-    outbound_flights_json = api_request_from_str(outbound_flights_request_str)
+    outbound_flights_url = "https://" + username + ":" + password + "@opensky-network.org/api/flights/departure?airport=" + str(airport.icao_code) + "&begin=" + str(begin_timestamp) + "&end=" + str(end_timestamp)
+     inbound_flights_json = api_request_from_str(inbound_flights_url)
+    outbound_flights_json = api_request_from_str(outbound_flights_url)
         
     with ProcessPoolExecutor(max_workers=2) as p:
         inbound_flights_task = p.submit(get_inbound_flights, inbound_flights_json)
