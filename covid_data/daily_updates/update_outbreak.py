@@ -134,8 +134,7 @@ def update_county_outbreak():
                 )
                 outbreak_cumulative_record.save()
             except:
-                print("No county entered for " + str(row['county']) + ", " + str(row['state']) + " (FIPS: " + county_fips + ")")
-                #continue
+                continue
             try:
                 county = County.objects.get(fips_code=county_fips)
                 
