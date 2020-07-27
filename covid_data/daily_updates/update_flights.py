@@ -55,7 +55,7 @@ def get_flights_by_airport(airport, flights_date):
     inbound_flights_url = "https://" + username + ":" + password + "@opensky-network.org/api/flights/arrival?airport=" + str(airport.icao_code) + "&begin=" + str(begin_timestamp) + "&end=" + str(end_timestamp)
     t.sleep(random())
     outbound_flights_url = "https://" + username + ":" + password + "@opensky-network.org/api/flights/departure?airport=" + str(airport.icao_code) + "&begin=" + str(begin_timestamp) + "&end=" + str(end_timestamp)
-     inbound_flights_json = api_request_from_str(inbound_flights_url)
+    inbound_flights_json = api_request_from_str(inbound_flights_url)
     outbound_flights_json = api_request_from_str(outbound_flights_url)
         
     with ProcessPoolExecutor(max_workers=2) as p:
