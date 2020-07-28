@@ -10,6 +10,7 @@ def get_county_weather_json(county, date_to_update):
     
     url = "https://history.openweathermap.org/data/2.5/history/city?lat=" + str(county.latitude) + "&lon=" + str(county.longitude) + "&start=" + str(start_timestamp) + "&end=" + str(end_timestamp) + "&appid=" + str(os.environ['OPENWEATHERMAP_API_KEY'])
     
+    
     return api_request_from_str(url)
 
 # Get uv index for county provided by OpenWeatherMap and returns value
@@ -23,41 +24,44 @@ def get_county_uv_index(county, date_to_update):
 
 # update county weather records
 def update_county_weather(county, date_to_update):
-    county_weather_json = get_county_weather_json(county, date_to_update)
-    
-    # Initialize variables
-    temp_sum = None
-    humidity_sum = None
-    max_temp = None
-    min_temp = None
-    uv_index = get_county_uv_index(county, date_to_update)
-
-    for i in range(0, county_weather_json['cnt']):
-        # Sum temperature values for each hour of the day.
-        if temp_sum is not None:
-            temp_sum += county_weather_json['list'][i]['main']['temp']
-        else:
-            temp_sum = county_weather_json['list'][i]['main']['temp']
+    try:
+        county_weather_json = get_county_weather_json(county, date_to_update)
         
-        # Sum humidity values for each hour of the day
-        if humidity_sum is not None:
-            humidity_sum += county_weather_json['list'][i]['main']['humidity']
-        else:
-            humidity_sum = county_weather_json['list'][i]['main']['humidity']
+        # Initialize variables
+        temp_sum = None
+        humidity_sum = None
+        max_temp = None
+        min_temp = None
+        uv_index = get_county_uv_index(county, date_to_update)
 
-        if max_temp is None or max_temp < county_weather_json['list'][i]['main']['temp_max']:
-            max_temp = county_weather_json['list'][i]['main']['temp_max']
+        for i in range(0, county_weather_json['cnt']):
+            # Sum temperature values for each hour of the day.
+            if temp_sum is not None:
+                temp_sum += county_weather_json['list'][i]['main']['temp']
+            else:
+                temp_sum = county_weather_json['list'][i]['main']['temp']
+            
+            # Sum humidity values for each hour of the day
+            if humidity_sum is not None:
+                humidity_sum += county_weather_json['list'][i]['main']['humidity']
+            else:
+                humidity_sum = county_weather_json['list'][i]['main']['humidity']
 
-        if min_temp is None or min_temp > county_weather_json['list'][i]['main']['temp_min']:
-            min_temp = county_weather_json['list'][i]['main']['temp_min']
+            if max_temp is None or max_temp < county_weather_json['list'][i]['main']['temp_max']:
+                max_temp = county_weather_json['list'][i]['main']['temp_max']
 
-    # Calculate average values from sums
-    temp_avg = round(temp_sum /county_weather_json['cnt'], 1)
-    humidity_avg = round(humidity_sum / county_weather_json['cnt'], 1)
-      
-    #Create county weather model
-    daily_weather = DailyWeather.objects.create(region=county, date=date_to_update, avg_temperature=temp_avg, max_temperature=max_temp, min_temperature=min_temp, avg_humidity=humidity_avg, uv_index=uv_index)
-    daily_weather.save()  
+            if min_temp is None or min_temp > county_weather_json['list'][i]['main']['temp_min']:
+                min_temp = county_weather_json['list'][i]['main']['temp_min']
+
+        # Calculate average values from sums
+        temp_avg = round(temp_sum /county_weather_json['cnt'], 1)
+        humidity_avg = round(humidity_sum / county_weather_json['cnt'], 1)
+        
+        #Create county weather model
+        daily_weather = DailyWeather.objects.create(region=county, date=date_to_update, avg_temperature=temp_avg, max_temperature=max_temp, min_temperature=min_temp, avg_humidity=humidity_avg, uv_index=uv_index)
+        daily_weather.save()
+    except:
+        return
 
 def update_state_weather(state, date_to_update):
     # Initialize variables
