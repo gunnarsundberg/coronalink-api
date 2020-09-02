@@ -6,6 +6,7 @@ import requests
 from concurrent.futures import ThreadPoolExecutor
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
 from datetime import datetime, date, time, timedelta
+import time as t
 from covid_data.models import County, State, DailyWeather, DisplayDate, DailyFlights, Outbreak
 from covid_data.daily_updates.update_outbreak import update_state_outbreak, update_county_outbreak
 from covid_data.daily_updates.update_weather import update_county_weather, update_state_weather
@@ -78,10 +79,10 @@ def update_county_data():
         county_in_tz = County.objects.filter(timezone_str=tz_str)[0]
         # If midnight has passed and there are no existing weather records for the previous day, create them.
         if (now_local >= midnight_local and not DailyWeather.objects.filter(date=new_display_date).filter(region=county_in_tz).exists()):
-            with ThreadPoolExecutor() as e:
-                for county in County.objects.filter(timezone_str=tz_str):
-                    e.submit(update_county_weather, county, new_display_date)
+            for county in County.objects.filter(timezone_str=tz_str):
+                    update_county_weather(county, new_display_date)
                     counties_updated +=1
+                    t.sleep(1)
 
     print("Updated weather data for " + str(counties_updated) + " counties.")
 
