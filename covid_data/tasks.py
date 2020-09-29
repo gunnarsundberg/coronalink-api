@@ -137,7 +137,7 @@ def clear_cache():
 @shared_task
 def create_daily_cache():
     for endpoint in CACHE_ENDPOINTS:
-        requests.get('http://161.35.60.204/api/v1' + endpoint)
+        requests.get('http://161.35.60.204/api/v1/' + endpoint)
     print("Updated cache.")
 
 """
