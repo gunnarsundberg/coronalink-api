@@ -145,7 +145,7 @@ Section: Utility Tasks
 """
 @shared_task
 def update_display_date():
-    new_display_date = date.today - timedelta(days=1)
+    new_display_date = date.today() - timedelta(days=1)
     new_display_date_object = DisplayDate.objects.create(date=new_display_date)
     new_display_date_object.save()
     print("Updated display date to " + str(new_display_date))
