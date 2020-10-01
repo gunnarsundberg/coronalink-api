@@ -94,7 +94,7 @@ class StateOutbreakCumulativeView(ListAPIView):
     #permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        queryset = OutbreakCumulative.objects.filter(region__in=State.objects.all()).filter(date=DisplayDate.objects.all().latest('date').date).order_by('region')
+        queryset = OutbreakCumulative.objects.filter(region__in=State.objects.all()).filter(date=OutbreakCumulative.objects.all().latest('date').date).order_by('region')
         return queryset
     
 class StateOutbreakCumulativeHistoricView(ListAPIView):
