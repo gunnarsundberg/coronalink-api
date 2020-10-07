@@ -253,7 +253,7 @@ def export_county_data():
         'region'
        ]]
     # Drop unnecessary county column
-    county_data_df = county_data_df.drop(county_data_df.columns[[0]], axis=1)
+    # county_data_df = county_data_df.drop(county_data_df.columns[[0]], axis=1)
 
     # Export
     county_data_df.to_csv(
