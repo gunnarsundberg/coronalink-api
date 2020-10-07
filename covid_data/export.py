@@ -33,35 +33,43 @@ def export_county_data():
     mobility_df = MobilityTrends.as_dataframe(queryset=MobilityTrends.objects.filter(region__in=county_qs))
     trips_df = DailyTrips.as_dataframe(queryset=DailyTrips.objects.filter(region__in=county_qs))
     weather_df = DailyWeather.as_dataframe(queryset=DailyWeather.objects.filter(region__in=county_qs))
+    county_df = County.as_dataframe(field_list=['id', 'name', 'parent_region', 'fips_code'])
+    state_df = State.as_dataframe(field_list=['id', 'code'])
 
     # Merge dataframes
+    regional_merge = pd.merge(county_df, state_df, how='left', left_on='parent_region', right_on='id')
+
     outbreak_merge = pd.merge(outbreak_cumulative_df[['region', 'date', 'date_of_outbreak', 'days_since_outbreak', 'cases', 'deaths']], outbreak_df[['cases', 'deaths', 'case_adjacency_risk', 'region', 'date']], on=['region', 'date'], suffixes=("_cumulative", "_new"))
     outbreak_mobility_merge = pd.merge(outbreak_merge, pd.merge(mobility_df, trips_df, how='left', on=['region', 'date']), how='left', on=['region', 'date'])
     daily_data = pd.merge(outbreak_mobility_merge, weather_df, how='left', on=['region', 'date'])
     demographics_merge = pd.merge(demographics_df, urban_df, how='left', left_on='region', right_on='county')
-    county_df = pd.merge(daily_data, demographics_merge, how='left', on='region')
-    
+    county_merge = pd.merge(demographics_merge, regional_merge['id', 'name', 'code', 'fips_code'], how='left', left_on='region', right_on='id')
+    county_data_df = pd.merge(daily_data, county_merge, how='left', on='region')
+
+    # Rename columns
+    county_data_df.rename(columns = {'name':'county', 'code':'state'}, inplace = True)
+
     # Drop id columns
-    cols = [c for c in county_df.columns if c[:2] != 'id']
-    county_df = county_df[cols]
-    print(county_df)
+    cols = [c for c in county_data_df.columns if c[:2] != 'id']
+    county_data_df = county_data_df[cols]
+    print(county_data_df)
     
     # Drop columns not relevant to county data
-    county_df = county_df.drop(labels=['county'], axis=1)
-    county_df = county_df.drop_duplicates()
-    county_df = county_df.sort_values(by=['region', 'date'])
+    county_data_df = county_data_df.drop(labels=['county'], axis=1)
+    county_data_df = county_data_df.drop_duplicates()
+    county_data_df = county_data_df.sort_values(by=['region', 'date'])
     
     # Add policy columns
     for policy_type in POLICY_TYPES:
-        county_df.insert(column=policy_type[0], value=None, loc=15)
+        county_data_df.insert(column=policy_type[0], value=None, loc=15)
 
     #with ProcessPoolExecutor() as p:
     for county in county_qs:
         county_policies = policy_qs.filter(region=county)
-        update_region_policies(county, county_df, county_policies, rollback_qs)
+        update_region_policies(county, county_data_df, county_policies, rollback_qs)
 
-    county_df.to_csv(settings.BASE_DIR + "/data/county_data.csv", index=False)
-    return county_df
+    county_data_df.to_csv(settings.BASE_DIR + "/data/county_data.csv", index=False)
+    return county_data_df
 
 def export_state_data():
     flights_df = DailyFlights.as_dataframe()
