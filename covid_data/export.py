@@ -55,7 +55,6 @@ def export_county_data():
     print(county_data_df)
     
     # Drop columns not relevant to county data
-    county_data_df = county_data_df.drop(labels=['county'], axis=1)
     county_data_df = county_data_df.drop_duplicates()
     county_data_df = county_data_df.sort_values(by=['region', 'date'])
     
@@ -68,6 +67,65 @@ def export_county_data():
         county_policies = policy_qs.filter(region=county)
         update_region_policies(county, county_data_df, county_policies, rollback_qs)
 
+    # Change order
+    county_data_df = county_data_df[[
+        'county',
+        'state', 
+        'fips_code' 
+        'date', 
+        'date_of_outbreak', 
+        'days_since_outbreak',
+       'cases_cumulative', 
+       'deaths_cumulative', 
+       'cases_new', 
+       'deaths_new',
+       'case_adjacency_risk', 
+       'retail_and_recreation_trend',
+       'grocery_and_pharmacy_trend', 
+       'parks_trend', 
+       'transit_trend',
+       'workplace_trend', 
+       'residential_trend', 
+       'entertainment/gym',
+       'restaurant dine-in', 
+       'public schools', 
+       '>500 gatherings',
+       '>50 gatherings', 
+       'stay at home', 
+       'population_at_home',
+       'population_out_of_home', 
+       'total_trips', 
+       'trips_lt_1', 
+       'trips_1_3',
+       'trips_3_5', 
+       'trips_5_10', 
+       'trips_10_25', 
+       'trips_25_50', 
+       'trips_50_100',
+       'trips_100_250', 
+       'trips_250_500', 
+       'trips_gt_500', 
+       'avg_temperature',
+       'max_temperature', 
+       'min_temperature', 
+       'avg_humidity', 
+       'uv_index',
+       'population', 
+       'population_density', 
+       'percent_male', 
+       'percent_female',
+       'median_age', 
+       'percent_60s', 
+       'percent_70s', 
+       'percent_80_plus',
+       'total_poverty', 
+       'percent_poverty', 
+       'urban_continuum_code',
+       'urban_influence_code',
+       'region'
+       ]]
+       
+    # Export
     county_data_df.to_csv(settings.BASE_DIR + "/data/county_data.csv", index=False)
     return county_data_df
 
