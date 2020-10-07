@@ -43,7 +43,7 @@ def export_county_data():
     outbreak_mobility_merge = pd.merge(outbreak_merge, pd.merge(mobility_df, trips_df, how='left', on=['region', 'date']), how='left', on=['region', 'date'])
     daily_data = pd.merge(outbreak_mobility_merge, weather_df, how='left', on=['region', 'date'])
     demographics_merge = pd.merge(demographics_df, urban_df, how='left', left_on='region', right_on='county')
-    county_merge = pd.merge(demographics_merge, regional_merge['id_x', 'name', 'code', 'fips_code'], how='left', left_on='region', right_on='id_x')
+    county_merge = pd.merge(demographics_merge, regional_merge[['id_x', 'name', 'code', 'fips_code']], how='left', left_on='region', right_on='id_x')
     county_data_df = pd.merge(daily_data, county_merge, how='left', on='region')
 
     # Rename columns
