@@ -51,10 +51,8 @@ def export_county_data():
     # Drop id columns
     cols = [c for c in county_data_df.columns if c[:2] != 'id']
     county_data_df = county_data_df[cols]
-    print(county_data_df)
     
     # Drop columns not relevant to county data
-    county_df = county_df.drop(labels=['county'], axis=1)
     county_data_df = county_data_df.drop_duplicates()
     county_data_df = county_data_df.sort_values(by=['region', 'date'])
     
@@ -68,6 +66,7 @@ def export_county_data():
         update_region_policies(county, county_data_df, county_policies, rollback_qs)
 
     # Rename columns
+    county_df = county_df.drop(labels=['county'], axis=1)
     county_data_df.rename(columns = {'name':'county', 'code':'state'}, inplace = True)
 
     # Change order
