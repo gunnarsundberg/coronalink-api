@@ -46,8 +46,7 @@ def export_county_data():
     county_merge = pd.merge(demographics_merge, regional_merge[['id_x', 'name', 'code', 'fips_code']], how='left', left_on='region', right_on='id_x')
     county_data_df = pd.merge(daily_data, county_merge, how='left', on='region')
 
-    # Rename columns
-    county_data_df.rename(columns = {'name':'county', 'code':'state'}, inplace = True)
+    
 
     # Drop id columns
     cols = [c for c in county_data_df.columns if c[:2] != 'id']
@@ -55,6 +54,7 @@ def export_county_data():
     print(county_data_df)
     
     # Drop columns not relevant to county data
+    county_df = county_df.drop(labels=['county'], axis=1)
     county_data_df = county_data_df.drop_duplicates()
     county_data_df = county_data_df.sort_values(by=['region', 'date'])
     
@@ -66,6 +66,9 @@ def export_county_data():
     for county in county_qs:
         county_policies = policy_qs.filter(region=county)
         update_region_policies(county, county_data_df, county_policies, rollback_qs)
+
+    # Rename columns
+    county_data_df.rename(columns = {'name':'county', 'code':'state'}, inplace = True)
 
     # Change order
     county_data_df = county_data_df[[
