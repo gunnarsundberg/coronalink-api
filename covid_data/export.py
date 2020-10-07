@@ -71,7 +71,7 @@ def export_county_data():
     county_data_df = county_data_df[[
         'county',
         'state', 
-        'fips_code' 
+        'fips_code',
         'date', 
         'date_of_outbreak', 
         'days_since_outbreak',
