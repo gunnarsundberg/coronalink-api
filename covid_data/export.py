@@ -66,7 +66,7 @@ def export_county_data():
         update_region_policies(county, county_data_df, county_policies, rollback_qs)
 
     # Rename columns
-    county_df = county_df.drop(labels=['county'], axis=1)
+    #county_df = county_df.drop(labels=['county'], axis=1)
     county_data_df.rename(columns = {'name':'county', 'code':'state'}, inplace = True)
 
     # Change order
