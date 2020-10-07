@@ -28,7 +28,7 @@ class PandasModelMixin(models.Model):
 """
 Section: Base Models
 """
-class Region(models.Model):
+class Region(PandasModelMixin):
     name = models.CharField(max_length=30)
 
     def __str__(self):
