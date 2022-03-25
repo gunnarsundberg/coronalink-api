@@ -22,7 +22,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', False)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '161.35.60.204']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'host.docker.internal']
 
 # Application definition
 
@@ -33,8 +33,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_celery_beat',
-    'django_postgrespool2',
     'django_redis',
 
     # allauth
@@ -48,16 +46,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
-    'rest_framework_cache',
     
-    'covid_data',
     'covid_api',
     'users',
 ]
 
 MIDDLEWARE = [
-    'django_prometheus.middleware.PrometheusBeforeMiddleware',
-    
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -67,8 +61,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
-    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
 ROOT_URLCONF = 'covid_core.urls'
@@ -88,7 +80,7 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 LOGIN_REDIRECT_URLNAME = os.environ['SITE_URL']
 
 ACCOUNT_FORMS = {
-'signup': 'users.forms.CustomSignupForm',
+    'signup': 'users.forms.CustomSignupForm',
 }
 
 TEMPLATE_DIR = os.path.join(BASE_DIR,"templates")
@@ -117,29 +109,12 @@ WSGI_APPLICATION = 'covid_core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django_postgrespool2',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ['DB_NAME'],
         'USER': os.environ['DB_USER'],
         'PASSWORD': os.environ['DB_PASSWORD'],
         'HOST': os.environ['DB_HOST'],
         'PORT': os.environ['DB_PORT'],
-    }
-}
-DATABASE_POOL_ARGS = {
-    'max_overflow': 100,
-    'pool_size': 5,
-    'recycle': 300
-}
-# Caching
-
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "IGNORE_EXCEPTIONS": True,
-        }
     }
 }
 
@@ -187,40 +162,19 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
      'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
-        'covid_api.api.ByMinuteRateThrottle',
-        'covid_api.api.ByHourRateThrottle',
-        'covid_api.api.ByDayRateThrottle',
+        'rest_framework.throttling.AnonRateThrottle'
     ],
     'DEFAULT_THROTTLE_RATES': {
         'anon': '100/hour',
-        'minute': '100/min',
-        'hour': '500/hour',
-        'day': '1000/day',
     },
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 300
 }
 
 # Cross-origin requests for frontend
 CORS_ORIGIN_WHITELIST = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    os.environ['CORS_ORIGIN_WHITELIST']
 ]
-
-# Celery application definition
-# http://docs.celeryproject.org/en/v4.0.2/userguide/configuration.html
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
-
-# Email settings
-EMAIL_HOST = os.environ['SMTP_HOST']
-EMAIL_PORT = os.environ['SMTP_PORT']
-EMAIL_HOST_USER = os.environ['SMTP_EMAIL']
-EMAIL_HOST_PASSWORD = os.environ['SMTP_PASSWORD']
-EMAIL_USE_TLS = True
