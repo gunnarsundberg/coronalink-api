@@ -6,25 +6,11 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-django = "*"
+django = "4.0.3"
 djangorestframework = "*"
-pandas = "*"
-requests = "*"
-pytz = "*"
-timezonefinder = "*"
 django-filter = "*"
-geopy = "*"
 django-cors-headers = "*"
-django-celery-beat = "*"
-django-prometheus = "*"
 tqdm = "*"
-redis = "*"
-supervisor = "*"
-gunicorn = "*"
-django-postgrespool2 = "*"
-celery = "~=4.4.3"
-django-redis = "*"
-rest-framework-cache = "*"
 django-allauth = "*"
 psycopg2-binary = "*"
 
