@@ -1,2 +1,3 @@
-# covid-tracker
- Application to track Covid19 outbreak. Developed by researchers at Florida Polytechnic University.
+# Coronalink API
+
+Provides a web API for data collected using the Coronalink Pipeline.
