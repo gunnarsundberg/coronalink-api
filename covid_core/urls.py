@@ -22,5 +22,5 @@ admin.site.site_title = 'Coronalink'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('users.urls')),
-    path('api/', include('covid_api.urls'))
+    path('v1/', include('covid_api.urls'))
 ]
